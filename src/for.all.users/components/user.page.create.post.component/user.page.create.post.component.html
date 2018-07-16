@@ -1,0 +1,144 @@
+<sui-accordion class="styled fluid" [closeOthers]="false">
+    <sui-accordion-panel [isOpen]="accordionOpen" [isDisabled]="true">
+        <div title data-title="1" (click)="toggleAccordion($event)">
+            <i class="green plus icon"></i>
+            Создать новый пост
+        </div>
+        <div class="ui basic segment" content>
+            <sui-dimmer class="inverted" [isDimmed]="dimmed" [isClickable]="false">
+                <div class="ui text large loader">
+                    {{dimmerMessage}}
+                </div>
+            </sui-dimmer>
+            <div>
+                <form class="ui form">
+                    <div class="ui inline fields">
+                        <div class="field">
+                            <sui-radio-button name="post_type" value="article" [ngModel]="type" (ngModelChange)="setPostType($event)">
+                                Статья
+                            </sui-radio-button>
+                        </div>
+                        <div class="field">
+                            <sui-radio-button name="post_type" value="list" [ngModel]="type" (ngModelChange)="setPostType($event)">
+                                Список
+                            </sui-radio-button>
+                        </div>
+                        <div class="field">
+                            <sui-radio-button name="post_type" value="video" [ngModel]="type" (ngModelChange)="setPostType($event)">
+                                Видео
+                            </sui-radio-button>
+                        </div>
+                        <div class="field">
+                            <sui-radio-button name="post_type" value="voting_list" [ngModel]="type" (ngModelChange)="setPostType($event)">
+                                Голосование
+                            </sui-radio-button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <form class="ui form" [ngClass]="{error: hasError}">
+                <div class="field">
+                    <label>Название</label>
+                    <div class="ui fluid input">
+                        <input type="text" name="post_header" [(ngModel)]="header" required #postName />
+                    </div>
+                </div>
+                <div [ngSwitch]="type">
+                    <!-- type article -->
+                    <div *ngSwitchCase="'article'" class="field">
+                        <label>Содержимое</label>
+                        <div class="ui fluid input">
+                            <textarea name="post_content" [(ngModel)]="content" required #articleContent ></textarea>
+                        </div>
+                    </div>
+                    <!-- type list -->
+                    <div *ngSwitchCase="'list'" class="field">
+                        <div class="fields">
+                            <div class="two wide field">
+                                <div class="ui basic icon fluid button" (click)="createListItem()">
+                                    <i class="plus icon"></i>
+                                </div>
+                            </div>
+                            <div class="fourteen wide field">
+                                <div class="ui fluid input">
+                                    <input type="text" name="new_list_item" [(ngModel)]="newListItem" />
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="createdListItems" class="ui selection list">
+                            <div [style.line-height.px]="20" class="item middle aligned" *ngFor="let item of createdListItems; trackBy: trackListItem">
+                                {{item?.value}}
+                                <div class="ui right floated mini very compact basic icon button" (click)="removeListItem(item?.id)">
+                                    <i class="delete icon"></i>
+                                </div>
+                                <div class="ui fitted hidden clearing divider"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- type voting list -->
+                    <div *ngSwitchCase="'voting_list'" class="field">
+                        <div class="fields">
+                            <div class="two wide field">
+                                <div class="ui basic fluid icon button" (click)="createListItem()">
+                                    <i class="plus icon"></i>
+                                </div>
+                            </div>
+                            <div class="fourteen wide field">
+                                <div class="ui fluid input">
+                                    <input type="text" name="voting_list" [(ngModel)]="newListItem" />
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="createdListItems" class="ui selection list">
+                            <div [style.line-height.px]="20" class="item" *ngFor="let item of createdListItems; trackBy: trackListItem">
+                                {{item?.value}}
+                                <div class="ui right floated mini very compact icon basic button" (click)="removeListItem(item?.id)">
+                                    <i class="delete icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- type video -->
+                    <div *ngSwitchCase="'video'">
+                        <div class="field" suiPopup popupInverted [popupTemplate]="videoPopup">
+                            <label>ID</label>
+                            <div class="ui fluid input">
+                                <input name="post_url" type="text" [ngModel]="content" (ngModelChange)="setVideoId($event)" #videoUrl required />
+                            </div>
+                        </div>
+                        <div *ngIf="hasError" [@entry]="true" [@leave]="true" class="field">
+                            <div class="ui error message">
+                                {{_errorMessage}}!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui hidden divider"></div>
+                <div [ngSwitch]="type">
+                    <button class="ui blue basic button" *ngSwitchCase="'article'" [disabled]="!header || !content" (click)="createPost()">
+                        {{submitLabel}}
+                    </button>
+                    <button class="ui blue basic button" *ngSwitchCase="'list'" [disabled]="!header || !createdListItems || !createdListItems.length" (click)="createPost()">
+                        {{submitLabel}}
+                    </button>
+                    <button class="ui blue basic button" *ngSwitchCase="'voting_list'" [disabled]="!header || !createdListItems || !createdListItems.length" (click)="createPost()">
+                        {{submitLabel}}
+                    </button>
+                    <button class="ui blue basic button" *ngSwitchCase="'video'" [disabled]="!header || !content || hasError" (click)="createPost()">
+                        {{submitLabel}}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </sui-accordion-panel>
+</sui-accordion>
+
+<!-- template for video popup -->
+<ng-template let-popup #videoPopup>
+    <div>
+        Укажите id видеозаписи расположенной на YouTube.
+    </div>
+    <div>
+        youtube.com/some-url/?v=<a>video id</a>
+    </div>
+</ng-template>

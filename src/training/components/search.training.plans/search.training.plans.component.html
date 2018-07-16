@@ -1,0 +1,94 @@
+<div>
+    <div class="ui segment">
+        <!-- eror message -->
+        <div *ngIf="hasError" class="ui error message">
+            {{_errorMessage}}
+        </div>
+        <!-- body -->
+        <form class="ui form">
+            <div class="ui inline fields">
+                <div class="field">
+                    <sui-radio-button name="typeSearch" value="1" [(ngModel)]="typeSearch">
+                        {{_commonLabels.SEARCH_TP_SEARCH_PARAM_SEARCH_BASED_ON_TP_NAME}}
+                    </sui-radio-button>
+                </div>
+                <div class="field">
+                    <sui-radio-button name="typeSearch" value="2" [(ngModel)]="typeSearch" >
+                        {{_commonLabels.SEARCH_TP_SEARCH_PARAM_SEARCH_BASED_ON_CREATOR_NAME}}
+                    </sui-radio-button>
+                </div>
+            </div>
+            <div class="fields">
+                <div class="fourteen wide field">
+                    <div class="ui fluid left icon input">
+                        <i class="search icon"></i>
+                        <input type="text" name="search" [(ngModel)]="name" [placeholder]="_commonLabels.SEARCH_TP_SEARCH_INPUT_PLACEHOLDER" />
+                    </div>
+                </div>
+                <div class="two wide field">
+                    <div class="ui fluid basic icon button" [class.loading]="searchingProcess" (click)="search()">
+                        <i class="search icon"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="ui inline fields">
+                <div class="field">
+                    <sui-radio-button name="category" value="0" [(ngModel)]="category">
+                        {{_commonLabels.SEARCH_TP_SEARCH_CATEGORY_WITHOUT_CATEGORY}}
+                    </sui-radio-button>
+                </div>
+                <div class="field">
+                    <sui-radio-button name="category" value="1" [(ngModel)]="category">
+                        {{_commonLabels.SEARCH_TP_SEARCH_CATEGORY_FOR_BEGINERS}}
+                    </sui-radio-button>
+                </div>
+                <div class="field">
+                    <sui-radio-button name="category" value="2" [(ngModel)]="category">
+                        {{_commonLabels.SEARCH_TP_SEARCH_CATEGORY_FOR_MIDDLE}}
+                    </sui-radio-button>
+                </div>
+                <div class="field">
+                    <sui-radio-button name="category" value="3" [(ngModel)]="category">
+                        {{_commonLabels.SEARCH_TP_SEARCH_CATEGORY_FOR_HIGHT_LEVEL}}
+                    </sui-radio-button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div *ngIf="(!items || !items.length) && trySearch" class="ui info message">
+        {{_commonLabels.SEARCH_TP_WITHOUT_RESULT}}
+    </div>
+    <div *ngIf="items && items.length" class="ui basic segment relative-table" [style.padding.px]="0">
+        <sui-dimmer class="inverted" [isDimmed]="dimmed" [isClickable]="false">
+            <div class="ui large text loader">
+                {{dimmerMessage}}
+            </div>
+        </sui-dimmer>
+        <table class="ui selectable inverted celled unstackable single line table" [style.margin.px]="0">
+            <thead>
+                <tr>
+                    <th class="collapsing">
+                        {{_commonLabels.SEARCH_TP_VIEW_TABLE_NUMBER_LABEL}}
+                    </th>
+                    <th>
+                        {{_commonLabels.SEARCH_TP_VIEW_TABLE_NAME_LABEL}}
+                    </th>
+                    <th class="collapsing">
+                        {{_commonLabels.SEARCH_TP_VIEW_TABLE_CATEGORY_LABEL}}
+                    </th>
+                    <th>
+                        {{_commonLabels.SEARCH_TP_VIEW_TABLE_RATING_LABEL}}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of items; let i = index;" 
+                    [training-plan-item]="item" 
+                    [index]="i + (offset || 1)"
+                    (click)="viewSearchedTrainingPlan(item.id)"></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="ui hidden divider"></div>
+    <pagination *ngIf="totalCount > step" [totalCount]="totalCount" [pageSize]="limit" [(currentPage)]="page" ></pagination>
+</div>

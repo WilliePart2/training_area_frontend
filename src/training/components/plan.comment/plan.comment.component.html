@@ -1,0 +1,75 @@
+<div class="center aligned">
+<div class="comment">
+    <div class="avatar">
+        <img [src]="item.user.avatar" />
+    </div>
+    <div class="content">
+        <div [style.padding.px]="5" class="ui top attached segment">
+            <a class="author">{{item.user.username}}</a>
+            <div class="metadata">{{item.date}}</div>
+        </div>
+        <div class="ui attached segment">
+            <div class="text">
+                <div class="ui basic segment mod-main-container">
+                    {{item.text}}
+                    <div [style.margin-top.px]="10" class="ui message" *ngFor="let text of item.addingText">
+                        <div class="mod-date-label">
+                            {{_commonLabels.TP_COMMENS_DOP_COMMENT_INFO_LABEL}} <div class="metadata">{{text.date}}</div>
+                        </div>
+                        <div [style.margin-top.px]="5" [style.margin-bottom.px]="5" class="ui divider"></div>
+                        <p>{{text.text}}</p>
+                    </div>
+                </div>
+                <div class="ui basic segment" *ngIf="modifyModeEnabled">
+                    <div class="ui error message" *ngIf="hasModifyCommentError">
+                        {{modifyCommentErrorMessage}}
+                    </div>
+                    <!-- mod dimmer -->
+                    <sui-dimmer class="inverted" [isDimmed]="modCommentDimmer" [isClickable]="false">
+                        <div class="ui large text loader">
+                            {{modCommentDimmerMessage}}
+                        </div>
+                    </sui-dimmer>
+                    <!-- mod input -->
+                    <form class="ui form">
+                        <div class="ui fluid input">
+                            <textarea name="modText" [(ngModel)]="modificationText" #modifyCommentTextarea></textarea>
+                        </div>
+                        <div class="ui hidden fitted divider"></div>
+                        <button class="ui basic primary button" [disabled]="!modificationText" (click)="modifyCommentWrapper()">
+                            {{_commonLabels.TP_COMMENTS_ADD_DOP_INFO_BTN}}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="ui bottom attached segment bottom-buttons">
+            <!-- Режим редактирования\удаление коментария -->
+            <ng-container *ngIf="item.user.id === userId">
+                <i *ngIf="!modifyModeEnabled" class="edit link icon" (click)="enableModifyMode()"></i>
+                <i *ngIf="modifyModeEnabled" class="power off link icon" (click)="disableModifyMode()"></i>
+            </ng-container>
+            <ng-container *ngIf="item.user.id === userId">
+                <i class="delete link icon" (click)="removeComment()"></i>
+            </ng-container>
+            <!-- Like/Dislike -->
+            <div class="actions bottom-buttons--actions">
+                <div class="vote-item" (click)="toggleLike()">
+                    <i class="ui {{ !likeRequestProccessing ? 'thumbs up' : 'spinner loading' }} link icon"></i>
+                    <div class="vote-item--label">
+                        {{item.like}}
+                    </div>
+                </div>
+                <div class="vote-item" (click)="toggleDislike()">
+                    <i class="ui {{ !dislikeRequestProccessing ? 'thumbs down' : 'spinner loading'}} link icon" [class.loading]="dislikeRequestProccessing"></i>
+                    <div class="vote-item--label">
+                        {{item.dislike}}
+                    </div>
+                </div>
+            </div>
+            <div class="ui clearing fitted hidden divider"></div>
+        </div>
+    </div>
+</div>
+<div class="ui hidden divider"></div>
+</div>

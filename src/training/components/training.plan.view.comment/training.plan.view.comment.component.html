@@ -1,0 +1,31 @@
+<div>
+    <sui-dimmer class="page" [isDimmed]="hasError" [isClickable]="false" (click)="resetErrorMessage()">
+        <div [style.margin.px]="20" class="ui error message" *ngIf="hasError">
+            {{_errorMessage}}
+        </div>
+    </sui-dimmer>
+    <!-- dimmer -->
+    <sui-dimmer class="page" [isClickable]="false" [isDimmed]="dimmed">
+        <div class="ui large text loader">
+            {{dimmerMessage}}
+        </div>
+    </sui-dimmer>
+    <!-- add comment form -->
+    <training-comment-add-item 
+        *ngIf="page <= 1"
+        (addCommentEvent)="addCommentHandler($event)"
+        [commandFromController]="contactToParts"
+    ></training-comment-add-item>
+    <!-- list comments -->
+    <div *ngIf="comments.length" class="ui fluid comments">
+        <ng-container *ngFor="let comment of comments; let i = index;">
+            <training-comment-item *ngIf="i < limit"
+                                   [item]="comment"
+                                   (hasRemoveComment)="deleteCommentHandler($event)"
+            ></training-comment-item>
+        </ng-container>
+    </div>
+    <!-- pagination -->
+    <div class="ui hidden divider"></div>
+    <pagination [totalCount]="totalCount" [pageSize]="step" [(currentPage)]="page"></pagination>
+</div>

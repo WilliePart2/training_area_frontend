@@ -1,0 +1,168 @@
+/*
+    base styles
+*/
+.msg-wrapp.msg-container {
+    /* float: right; */
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    /* justify-content: flex-end; */
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    width: auto;
+    height: auto;
+}
+
+.comment.msg-view--item {
+    width: auto;
+    display: inline-block;
+    border-radius: 5px;
+    margin: 5px 0;
+    padding: 10px !important;
+    overflow: hidden;
+    /* text-align: right; */
+    box-sizing: border-box;
+    background-color: rgb(248, 245, 245);
+    transition: all .3s ease;
+}
+.comment.msg-view--item:hover {
+    background-color: rgba(156, 166, 192, 0.3);
+}
+
+.msg-view--item_content__meta {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    /* justify-content: flex-end; */
+    /* margin-left: 20px; */
+}
+.msg-view--item_content__meta .author {
+    margin-left: 5px;
+}
+.msg-view--item_content__meta .metadata {
+    white-space: nowrap;
+}
+
+
+.msg-view--item_content__btn {
+    border-radius: 3px;
+    padding: 2px;
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin: 5px;
+    opacity: 0;
+    transition: all .3s ease-out;
+}
+.msg-view--item:hover .msg-view--item_content__btn {
+    opacity: 1;
+    cursor: pointer;
+}
+
+
+.msg-view--item_content__btn:hover {
+    background-color: rgb(247, 48, 48);
+    color: white;
+}
+.msg-view--item_content__btn .msg-view--item_content__btn--label {
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: width .2s ease, opacity .3s ease-in;
+}
+.msg-view--item_content__btn:hover .msg-view--item_content__btn--label {
+    width: 150px;
+    opacity: 1;
+}
+.msg-view--item_content__btn .icon {
+    margin: 0;
+}
+.msg-view--item.not-readed {
+    background-color: rgb(229, 236, 248);
+}
+
+/* 
+    styles for own messages
+*/
+.msg-wrapp.msg-container.msg-own--container {
+    /* float: right; */
+    justify-content: flex-end;
+}
+.msg-own--container .msg-view--item_content__meta {
+    justify-content: flex-end;
+    margin-left: 20px;
+}
+
+/*
+    styles for other messages
+*/
+
+
+
+/*
+    props for own message start
+*/
+.comment.msg-view--item.msg-view--item__own {
+    text-align: right;
+}
+.comment.msg-view--item:hover.msg-view--item__own {
+    margin-right: 10px;
+    /* box-shadow: 3px 3px 5px -3px grey; */
+}
+.msg-view--item__own .msg-view--item_author {
+    padding-left: 5px;
+}
+.msg-view--item.msg-view--item__own {
+    margin-left: auto;
+    /* background-color: rgb(248, 245, 245); */
+}
+.msg-view--item.msg-view--item__own .msg-view--item_avatar {
+    float: right;
+}
+.msg-view--item.msg-view--item__own .msg-view--item_content {
+    width: calc(100% - (3.5em));
+    /* margin-left: auto; */
+    margin-right: 1em;
+    float: left;
+}
+.msg-view--item.msg-view--item__own .msg-view--item_content__btn {
+    float: left;
+    top: 0;
+    left: 0;
+}
+/*
+    props for own message end
+*/
+
+/*
+    props for other messages start
+*/
+.comment.msg-view--item:hover.msg-view--item__other {
+    margin-left: 10px;
+}
+.comment.msg-view--item.msg-view--item.msg-view--item__other {
+    text-align: left;
+}
+.msg-view--item__other .msg-view--item_author {
+    margin-left: 0;
+}
+.msg-view--item.msg-view--item__other .msg-view--item_content__btn {
+    float: right;
+    top: 0;
+    right: 0;
+}
+
+
+.msg-wrapp.msg-container.msg-other--container {
+    /* float: left; */
+    justify-content: flex-start;
+}
+.msg-other--container .msg-view--item_content__meta {
+    justify-content: flex-start;
+    margin-right: 20px;
+}
+/*
+    props for other messges end
+*/

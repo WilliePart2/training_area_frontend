@@ -1,0 +1,8 @@
+.relative-table {
+    overflow: auto;
+    margin-bottom: 10px;
+}
+
+.pointed {
+    cursor: pointer;
+}

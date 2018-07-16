@@ -1,0 +1,53 @@
+.list-container {
+    overflow: auto;
+}
+
+.cursor-pointing {
+    cursor: pointer;
+}
+
+.table-item {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.list-container .table .tr-container {
+    position: relative;
+}
+
+.tr-readme--light {
+    background-color: white;
+    color: black;
+}
+.tr-readme--dark {
+    background-color: black;
+    color: white;
+}
+.tr-readme {
+    position: absolute;
+    bottom: 100%;
+    left: -999rem;
+    margin: 10px 10px 0 10px;
+    padding: 10px 5px;
+    width: 100%;
+    border-radius: 5px;
+    opacity: 0;
+    transition: opacity .3s ease;
+}
+.tr-container:hover .tr-readme {
+    opacity: 1;
+    left: 0;
+}
+.tr-readme:after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 10px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: white transparent transparent transparent;
+}
+.tr-readme--dark.tr-readme:after {
+    border-color: black transparent transparent transparent;
+}

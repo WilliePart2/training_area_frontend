@@ -1,0 +1,99 @@
+<!-- error msg -->
+<div *ngIf="hasError" class="ui error message">
+    {{_errorMessage}}
+</div>
+<!-- dimmer -->
+<sui-dimmer class="page inverted" [isDimmed]="dimmed" [isClickable]="false">
+    <div class="ui large text loader">
+        {{dimmerMessage}}
+    </div>
+</sui-dimmer>
+<!-- templates -->
+<ng-template let-option #userOptionItem>
+    {{option.username}}
+</ng-template>
+<ng-template let-modal="modal" let-context #createMessageModal>
+    <sui-dimmer class="inverted" [isDimmed]="smallDimmerEnabled" [isClickable]="smallDimmerClickable">
+        <div class="ui large text loader">
+            {{smallDimmerMessage}}
+        </div>
+    </sui-dimmer>
+        <div class="header">
+            {{_commonLabels.CREATE_MSG_HEADER}}
+        </div>
+        <div class="content">
+            <form class="ui form">
+                <div class="inline fields">
+                    <label suiPopup [popupText]="_commonLabels.CREATE_MSG_RECIPIENT_PLACEHOLDER" popupPlacement="top" popupInverted>
+                        {{_commonLabels.CREATE_MSG_RECIPIENT_HEADER}}
+                    </label>
+                    <div class="field">
+                        <sui-multi-select
+                            (selectedOptionsChange)="selectUserForSedMessage($event)"
+                            name="recipient_name"
+                            [(ngModel)]="selectedRecipientIds"
+                            icon="none"
+                            labelField="username"
+                            valueField="id"
+                            [placeholder]="_commonLabels.CREATE_MSG_RECIPIENT_PLACEHOLDER"
+                            [optionTemplate]="userOptionItem"
+                            [optionsLookup]="optionLookupFunc"
+                            [isSearchable]="true"
+                            [maxSelected]="10"
+                            [hasLabels]="true"
+                            #recipient
+                        >
+                        <sui-select-option *ngFor="let user of recipient.filteredOptions" [value]="user"></sui-select-option>
+                        </sui-multi-select>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>{{_commonLabels.CREATE_MSG_THEME_LABEL}}</label>
+                    <div class="ui fluid input">
+                        <input type="text" name="mesage_theme" [(ngModel)]="addMessageHeader" />
+                    </div>
+                </div>
+                <div class="field">
+                    <label>{{_commonLabels.CREATE_MSG_CONTENT_LABEL}}</label>
+                    <div class="ui fluid input">
+                        <textarea name="message_content" [(ngModel)]="addMessageContent"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="actions">
+            <div class="ui basic button" (click)="modal.deny()">
+                {{_commonLabels.CANCEL_MSG_SENDING}}
+            </div>
+            <button [disabled]="!addMessageHeader || !addMessageContent || !selectedRecipientIds || !selectedRecipientIds.length" 
+                class="ui blue button" (click)="wrapperForSending(modal.approve)">
+                    {{_commonLabels.SEND_MSG_BTN}}
+            </button>
+        </div>
+</ng-template>
+<!-- body -->
+<form class="ui form">
+    <div class="inline fields">
+        <div class="twelve wide field" [class.drop-padding]="clientWidth < 767">
+            <div class="ui left icon fluid input" [class.loading]="searchPerforming">
+                <i class="search icon"></i>
+                <input type="text" name="search_correspondence_field" [placeholder]="_commonLabels.SEARCH_ADDRESSEE_PLACEHOLDER"
+                    [(ngModel)]="searchAddressee" (input)="findAddresseeHandler()" />
+            </div>
+        </div>
+        <div class="four wide field" [class.more-padding]="clientWidth < 767" [style.padding-right]="0">
+            <div class="ui fluid icon labeled basic blue button" (click)="openSendMessageWindow()">
+                <i class="{{_commonIcons.CREATE_MSG_ICON}} icon"></i>
+                {{_commonLabels.CREATE_MESSAGE_BTN}}
+            </div>
+        </div>
+    </div>
+</form>
+<ng-container *ngIf="filteredAddressee && filteredAddressee.length">
+    <app-message-topic-item [@dropRoomItem]="true" *ngFor="let item of filteredAddressee" [item]="item" (deleteRoom)="dropAddresse($event)"></app-message-topic-item>
+</ng-container>
+<ng-container *ngIf="!filteredAddressee || !filteredAddressee.length">
+    <div class="ui info message">
+        {{_commonLabels.EMPTY_MESSAGES}}
+    </div>
+</ng-container>

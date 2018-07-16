@@ -1,0 +1,223 @@
+<!-- Модальное окно для вывода ошибки -->
+<ng-template let-context let-modal="modal" #errorModal>
+    <div class="header">
+        {{_errorLabels.TR_ERROR_MODAL_MESSAGE}}
+    </div>
+    <div class="content">
+        <div class="ui error message">
+            {{context.message}}
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui basic button" (click)="modal.deny()">{{_commonLabels.TR_CLOSE_ERROR_MODAL}}</div>
+    </div>
+</ng-template>
+
+<!-- Модальное окно для удаления упражнения -->
+<ng-template let-context let-modal="modal" #deleteExerciseModal>
+    <div class="content">
+        {{context.deleteExercisePromptMessage}}
+    </div>
+    <div class="actions">
+        <div class="ui basic button" (click)="modal.deny()">
+            {{_commonLabels.TR_DELETE_EXERCISE_CANCEL}}
+        </div>
+        <div class="ui red button" (click)="modal.approve()">
+            {{_commonLabels.TRAINING_DELETE_EXERCISE_ACCEPT}}
+        </div>
+    </div>
+</ng-template>
+
+<!-- Модальное окно для удаления тренировки -->
+<ng-template let-context let-modal="modal" #deleteTrainingModal>
+    <div class="content">
+        {{context.deleteTrainingPromptMessage}}
+    </div>
+    <div class="actions">
+        <div class="ui right floated red button" (click)="modal.approve()">
+            {{_commonLabels.TR_DELETE_TRAINING_ACCEPT}}
+        </div>
+        <div class="ui right floated basic button" (click)="modal.deny()">
+            {{_commonLabels.TR_DELETE_TRAINING_CANCEL}}
+        </div>
+        <div class="ui hidden right floated divider"></div>
+    </div>
+</ng-template>
+
+<!-- Модальное окно для добавления упражнений в тренировку -->
+<ng-template let-context let-modal="modal" #addExerciseModal>
+    <div class="header">
+        {{context.trainingName}}
+    </div>
+    <div class="content">
+        <table class="ui inverted very compact single line selectable celled table">
+            <thead>
+            <tr>
+                <th class="collapsing"></th>
+                <th>{{_commonLabels.ADD_TRAINING_NAME_FIELD}}</th>
+                <th class="collapsing">{{_commonLabels.ADD_TRAINING_PM_FIELD}}</th>
+                <th class="collapsing">{{_commonLabels.ADD_TRAINING_TARGET_MUSCLE_GROUP}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of context.list">
+                <td class="collapsing">
+                    <sui-checkbox [(ngModel)]="item.checked" (checkChange)="checkExercise(item.id)"></sui-checkbox>
+                </td>
+                <td class="collapsing">{{item.exercise.name}}</td>
+                <td class="collapsing">{{item.oneRepeatMaximum}}</td>
+                <td class="collapsing">{{item.exercise.group}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="actions">
+        <button [disabled]="!checkedExercises.length" class="ui basic green right floated button" (click)="modal.approve()">
+            {{_commonLabels.TR_ADD_EXERCISE_MODAL_ACCEPT_BTN}}
+        </button>
+        <div class="ui basic red right floated button" (click)="modal.deny()">
+            {{_commonLabels.TR_ADD_EXERCISE_MODAL_CANCEl_BTN}}
+        </div>
+        <div class="ui hidden clearing divider"></div>
+    </div>
+</ng-template>
+
+<!-- Сама тренировка -->
+<!-- Шапка тренировки -->
+<div class="ui basic segment">
+    <!-- dimmer -->
+    <sui-dimmer class="inverted" [isDimmed]="dimmed" [isClickable]="false">
+            <div class="ui large text loader">
+                {{dimmerMessage}}
+            </div>
+    </sui-dimmer>
+    <div>
+        <!-- Дропдаун управления -->
+        <div *ngIf="mode !== 'view' && !(mode === 'complete' && !isCompleted) && !(mode === 'process' && !isCompleted)"
+            class="ui right floated left pointing dropdown icon button"
+                suiDropdown
+                autoClose="disabled"
+                [isOpen]="isDropdownMenuOpen"
+                (click)="isDropdownMenuOpen = !isDropdownMenuOpen"
+        >
+            <i class="sidebar icon"></i>
+            <div class="menu" suiDropdownMenu>
+                <!-- buttons for editing and viewing -->
+                <ng-container *ngIf="mode === 'edit' || mode === 'view'">
+                    <div *ngIf="mode === 'edit'" class="item" (click)="deleteTraining(training.id)">
+                        {{_commonLabels.TR_NAVIGATE_BTN_DELETE_TRAINING}}
+                    </div>
+                    <div *ngIf="mode === 'edit'" (click)="addExerciseToTraining(training.name)" class="item">
+                        {{_commonLabels.TR_NAVIGATE_BTN_ADD_EXERCISE}}
+                    </div>
+                </ng-container>
+                <!-- buttons for training and process(handing) training plan -->
+                <ng-container *ngIf="mode === 'own' || mode === 'process' || mode === 'complete'">
+                    <ng-container *ngIf="!isHanding">
+                        <div *ngIf="mode === 'own' && !isTrainingBegin && !isCompleted" (click)="beginTraining()" class="link item">
+                            {{_commonLabels.TR_NAVIGATE_BTN_START_TRAINING}}
+                        </div>
+                        <div *ngIf="mode === 'own' && isTrainingBegin && !isCompleted" (click)="manualEndTraining()" class="link item">
+                            {{_commonLabels.TR_NAVIGATE_BTN_END_TRAINING}}
+                        </div>
+                        <ng-container *ngIf="!isEditable">
+                            <div *ngIf="(mode === 'own' || mode === 'complete' || mode === 'process') && isCompleted" (click)="enableHandleMode()" class="link item">
+                                {{_commonLabels.TR_NAVIGATE_BTN_SHOW_RESULT}}
+                            </div>
+                            <div *ngIf="mode === 'own' && isCompleted" (click)="enableEditMode()" class="link item">
+                                {{_commonLabels.TR_NAVIGATE_BTN_EDIT_RESULT}}
+                            </div>
+                        </ng-container>
+                        <div *ngIf="mode === 'own' && isCompleted && isEditable" (click)="saveEditVersion()" class="link item">
+                            {{_commonLabels.TR_NAVIGATE_BTN_SAVE_EDITION_RESULT}}
+                        </div>
+                        <div *ngIf="mode === 'own' && isCompleted && isEditable" (click)="disableEditMode()" class="link item">
+                            {{_commonLabels.TR_NAVIGATE_BTN_CANCEL_EDITION}}
+                        </div>
+                    </ng-container>
+                    <div *ngIf="(mode === 'own' || mode === 'complete' || mode === 'process') && isHanding" (click)="disableHandleMode()" class="link item">
+                        {{_commonLabels.TR_NAVIGATE_BTN_END_REVIEW}}
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+        <!-- Заголовок тренировки -->
+        <div class="ui left floated block header">
+            <i *ngIf="isCompleted" class="green checkmark icon"></i>
+            {{training.name}}
+        </div>
+        <div class="ui clearing fitted hidden divider"></div>
+    </div>
+<div class="responsive-table">
+<table class="ui selectable single line inverted very conpact unstackable celled table">
+    <thead>
+        <tr>
+            <!-- Неизменяемый блок -->
+            <th class="collapsing">{{_commonLabels.TR_VIEW_NUMBER}}</th>
+            <th>{{_commonLabels.TR_VIEW_EXERCISE}}</th>
+            <th class="collapsing">{{_commonLabels.TR_VIEW_ONEPM}}</th>
+            <th class="collapsing">{{_commonLabels.TR_VIEW_WEIGHT}}</th>
+            <th class="collapsing">{{_commonLabels.TR_VIEW_REPEATS}}</th>
+            <th class="collapsing">{{_commonLabels.TR_VIEW_REPEATS_SECTION}}</th>
+            <!-- Block witch will apear in most cases -->
+            <ng-container *ngIf="!isTrainingBegin && !isHanding && !isEditable">
+                <th class="collapsing">{{_commonLabels.TR_VIEW_KPSH}}</th>
+                <th class="collapsing">{{_commonLabels.TR_VIEW_TONNAGE}}</th>
+                <th class="collapsing">{{_commonLabels.TR_VIEW_AVERAGE_WEIGHT}}</th>
+                <th class="collapsing">{{_commonLabels.TR_VIEW_RELATIVE_ENTENCITY}}</th>
+                <th *ngIf="mode === 'edit'" class="collapsing"><!-- actions --></th>
+            </ng-container>
+            <!-- Block whitch will be apear for do training and for handing of mentor -->
+            <ng-container 
+            *ngIf="(mode === 'process' || mode === 'own' || mode === 'complete') && (isTrainingBegin || isHanding || isEditable)">
+                <th class="collapsing">{{_commonLabels.TR_VIEW_WEIGHT}}</th>
+                <th class="collapsing">{{_commonLabels.TR_VIEW_REPEATS}}</th>
+                <th class="collapsing">{{_commonLabels.TR_VIEW_REPEATS_SECTION}}</th>
+                <th class="collapsing"><!-- actions for make training --></th>
+            </ng-container>
+        </tr>
+    </thead>
+<!-- Тело тренировки -->
+    <tbody *ngFor="let exerciseItem of training.exercises; let i = index; trackBy: exerciseTracker"
+    [index]="i"
+    [exercise-item]="exerciseItem"
+    [mode]="mode"
+    [isTrainingBegin]="isTrainingBegin"
+    [isHanding]="isHanding"
+    [isEditable]="isEditable"
+    [connectWithTraining]="relationWithExercises"
+    >
+    </tbody>
+    <tfoot>
+        <!-- Row witch will be apear in 'edit' and 'view' mode -->
+        <ng-container *ngIf="!isTrainingBegin && !isHanding && !isEditable">
+            <tr>
+                <th colspan="6">{{_commonLabels.TR_BURDEN_CHARACTERISTIC}}</th>
+                <th>{{calcService.calculateTrainingParams(imTraining).KPSH}}</th>
+                <th>{{calcService.calculateTrainingParams(imTraining).tonnage}}</th>
+                <th>{{calcService.calculateTrainingParams(imTraining).averageWeight || 0}}</th>
+                <th>{{calcService.calculateTrainingParams(imTraining).averageInt || 0}}%</th>
+                <th *ngIf="mode === 'edit'"></th>
+            </tr>
+        </ng-container>
+        <!-- Row whitch will be apear when user make/edit training or mentor handle training -->
+        <ng-container *ngIf="isTrainingBegin || isHanding || isEditable">
+            <tr>
+                <th colspan="3"></th>
+                <th colspan="3">
+                    {{_commonLabels.TR_VIEW_DICTABLE}}
+                </th>
+                <ng-container *ngIf="isHanding || isEditable">
+                    <th colspan="3">{{_commonLabels.TR_VIEW_COMPLETED}}</th>
+                </ng-container>
+                <ng-container *ngIf="isTrainingBegin && !isHanding">
+                    <th colspan="3" class="center aligned">{{_commonLabels.TR_VIEW_ACCOMPLISH}}</th>
+                </ng-container>
+                <th></th>
+            </tr>
+        </ng-container>
+    </tfoot>
+</table>
+</div>
+</div>
+<div class="ui hidden divider"></div>

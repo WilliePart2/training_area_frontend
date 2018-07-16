@@ -1,0 +1,24 @@
+<div class="ui twelve wide column">
+    <ng-container *ngIf="items && items.byGroup">
+        <ng-container *ngFor="let list of items.byGroup">
+            <div *ngFor="let item of list; let gItemIndex = index;">
+                <div *ngIf="gItemIndex < 1">
+                    <div class="ui dividing header">
+                        {{item}}
+                    </div>
+                    <div class="ui hidden divider"></div>
+                </div>
+                <app-setting-contacts-item *ngIf="gItemIndex > 0" [fieldValue]="item"></app-setting-contacts-item>
+            </div>
+        </ng-container>
+    </ng-container>
+    <ng-container *ngIf="items && items.groupless">
+        <div class="ui dividing header">
+            Дополнительная информация
+        </div>
+        <div class="ui hidden divider"></div>
+        <ng-container *ngFor="let ungroupItem of items.groupless">
+            <app-setting-contacts-item [fieldValue]="ungroupItem"></app-setting-contacts-item>
+        </ng-container>
+    </ng-container>
+</div>

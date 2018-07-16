@@ -1,0 +1,11 @@
+<div class="ui image header msg-header--item" (mouseover)="setHover()" (mouseleave)="dropHover()">
+    <div class="image msg-header--item_image">
+        <img [src]="member?.avatar" />
+    </div>
+    <div class="content msg-header--item_hidden">
+        <a class="description msg-header--item_name" (click)="goToUserPage(member?.id)" >{{member?.username}}</a>
+        <!-- <div class="sub header msg-header--item_type">
+            {{member?.type ? _commonLabels.USER_MENTOR : _commonLabels.USER_SIMPLE_USER}}
+        </div> -->
+    </div>
+</div>

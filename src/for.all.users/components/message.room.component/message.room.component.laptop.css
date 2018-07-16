@@ -1,0 +1,10 @@
+@media(min-width: 769px) {
+    .msg-item.msg-view {
+        left: 50%;
+        margin-left: -300px;
+        margin-right: auto;
+        width: 600px;
+        border-right: 1px solid lightgrey;
+        border-left: 1px solid lightgrey;
+    }
+}

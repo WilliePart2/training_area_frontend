@@ -1,0 +1,174 @@
+<div>
+    <!-- error message -->
+    <div *ngIf="hasError" class="ui error message">
+        {{_errorMessage}}
+    </div>
+    <!-- main error dimmer -->
+    <sui-dimmer class="page" [isDimmed]="isErrDimmerEnabled" [isClickable]="false" (click)="resetErrors()">
+        <div [style.margin.px]="20" class="ui inverted icon header">
+            <i class="red circular outline inverted warning icon"></i>
+            <div class="content">
+                <ul>
+                    <li *ngFor="let msg of errorMessages;">{{msg}}</li>
+                </ul>
+            </div>
+        </div>
+    </sui-dimmer>
+    <!-- std dimmer -->
+    <sui-dimmer class="page" [isDimmed]="dimmed" [isClickable]="false">
+        <div class="ui large text loader">
+            {{dimmerMessage}}
+        </div>
+    </sui-dimmer>
+    <form class="ui form">
+        <div class="ui top attached header">
+            {{_commonLabels.CREATE_TP_BASE_SECTION_LABEL}}
+        </div>
+        <div class="ui attached segment">
+            <div class="field">
+                <div class="ui tiny header">{{_commonLabels.CREATE_TP_BASE_SECTION_TP_NAME_LABEL}}</div>
+                <div class="ui fluid input">
+                    <input type="text" name="name" [(ngModel)]="name" />
+                </div>
+            </div>
+            <div class="ui field">
+                <div class="ui tiny header">
+                    <div class="content">{{_commonLabels.CREATE_TP_BASE_SECTION_TP_DESCRIPTION}}</div>
+                    <div class="sub header">{{_commonLabels.CREATE_TP_BASE_SECTION_TP_DESCRIPTION_UNNECCESSARY_LABEL}}</div>
+                </div>
+                <div class="ui fluid input">
+                    <textarea name="readme" [(ngModel)]="readme"></textarea>
+                </div>
+            </div>
+            <div class="ui horizontal divider">{{_commonLabels.CREATE_TP_BASE_SECTION_TP_VISIBILITY_HEADER}}</div>
+            <div class="ui inline fields">
+                <div class="field">
+                    <label>
+                        <sui-radio-button type="radio" name="visible" value="1" [(ngModel)]="visible"></sui-radio-button>
+                        {{_commonLabels.CREATE_TP_BASE_SECTION_TP_VISIBILITY_VISIBLE_FOR_ALL}}
+                    </label>
+                    <label>
+                        <sui-radio-button type="radio" name="visible" value="2" [(ngModel)]="visible"></sui-radio-button>
+                        {{_commonLabels.CREATE_TO_BASE_SECTION_TP_VISIBILITY_VISIBLE_ONLY_FOR_OWNER}}
+                    </label>
+                </div>
+            </div>
+            <div class="ui horizontal divider">{{_commonLabels.CREATE_TP_BASE_SECTION_CATEGORY}}</div>
+                <div class="ui inline fields">
+                    <div class="field">
+                        <label>
+                            <sui-radio-button name="category" value="0" [(ngModel)]="category" ></sui-radio-button>
+                            {{_commonLabels.CREATE_TP_BASE_SECTION_CATEGORY_WITHOUT_CATEGORY}}
+                        </label>
+                    </div>
+                    <div class="field">
+                        <label>
+                            <sui-radio-button name="category" value="1" [(ngModel)]="category" ></sui-radio-button>
+                            {{_commonLabels.CREATE_TP_BASE_SECTION_CATEGORY_FOR_BEGINERS}}
+                        </label>
+                    </div>
+                    <div class="field">
+                        <label>
+                            <sui-radio-button name="category" value="2" [(ngModel)]="category" ></sui-radio-button>
+                            {{_commonLabels.CREATE_TP_BASE_SECTION_CATEGORY_FOR_MIDDLE}}
+                        </label>
+                    </div>
+                    <div class="field">
+                        <label>
+                            <sui-radio-button name="category" value="3" [(ngModel)]="category"></sui-radio-button>
+                            {{_commonLabels.CREATE_TP_BASE_SECTION_CATEGORY_FOR_TOP}}
+                        </label>
+                    </div>
+                </div>
+        </div>
+
+        <div class="ui top attached header">
+            {{_commonLabels.CREATE_TP_EXERCISES_LABEL}}
+        </div>
+        <div class="ui attached segment">
+            <div class="ui fields">
+                <!-- Упражнения для тренировочного плана -->
+                <div class="six wide field">
+                    <!-- Тренировочные упражнения -->
+                    <sui-select name="exercise" class="selection"
+                            [placeholder]="_commonLabels.CREATE_TP_EXERCISES_SELECT_EXERCISE_PLACEHOLDER"
+                            [(ngModel)]="selectedExercise"
+                            [options]="exerciseStore"
+                            labelField="name"
+                            valueField="id"
+                            [isSearchable]="true"
+                            #exerciseSelect
+                    >
+                        <div class="ui basic segment">
+                            <div class="ui search icon input">
+                                <i class="ui search icon"></i>
+                                <input suiSelectSearch type="text" />
+                            </div>
+                        </div>
+                        <div class="ui divider"></div>
+                        <sui-select-option *ngFor="let option of exerciseSelect.filteredOptions" [value]="option"></sui-select-option>
+                    </sui-select>
+                </div>
+                <div class="six wide field">
+                    <!-- Групы тренировочных упражнений -->
+                    <sui-select name="exercisesGroup" class="selection"
+                                [placeholder]="_commonLabels.CREATE_TP_EXERCISES_SELECT_GROUP_PLACEHOLDER"
+                                [(ngModel)]="selectedGroup"
+                                [options]="groupStore"
+                                labelField="group"
+                                valueField="group"
+                                [isSearchable]="true"
+                                (selectedOptionChange)="chooseGroup($event)"
+                                #groupSelect
+                    >
+                        <div class="ui basic segment">
+                            <div class="ui search icon input">
+                                <i class="ui search icon"></i>
+                                <input suiSelectSearch type="text" />
+                            </div>
+                        </div>
+                        <sui-select-option *ngFor="let group of groupSelect.filteredOptions" [value]="group"></sui-select-option>
+                    </sui-select>
+                </div>
+                <div class="four wide field">
+                    <div class="ui basic fluid button" (click)="addExercise()">{{_commonLabels.CREATE_TP_EXERCISES_ADD_EXERCSIE_BTN}}</div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Отображение упражнений -->
+    <div class="ui hidden divider"></div>
+    <div class="relative-table">
+        <table *ngIf="!isEmpty" class="ui inverted single line very compact celled selectable unstackable table">
+            <thead>
+                <tr>
+                    <th>{{_commonLabels.CREATE_TP_EXERCISES_VIEW_NAME_LABEL}}</th>
+                    <th class="collapsing">{{_commonLabels.CREATE_TP_EXERCISES_VIEW_1PM_LABEL}}</th>
+                    <th class="collapsing">{{_commonLabels.CREATE_TP_EXERCISES_VIEW_ACTION_LABEL}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of addedExercises">
+                    <td>{{item.name}}</td>
+                    <td>
+                        <div class="ui transparent fluid input">
+                            <input type="text" [(ngModel)]="item.oneRepeatMaximum" />
+                        </div>
+                    </td>
+                    <td class="collapsing center aligned">
+                        <div class="ui basic inverted very compact icon button" (click)="removeAddedItem(item.uniqueId)">
+                            <i class="ui delete icon"></i>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="ui hidden divider"></div>
+    <div class="ui grid">
+        <div class="sixteen wide mobile ten wide tablet six wide computer column">
+            <button class="ui basic primary fluid button" [ngClass]="{disabled: isEmpty, loading: sendingRequest}" (click)="saveTrainingPlan()">{{_commonLabels.CREATE_TP_SAVE_BTN}}</button>
+        </div>
+    </div>
+</div>

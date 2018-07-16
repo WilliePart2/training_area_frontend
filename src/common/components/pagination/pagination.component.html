@@ -1,0 +1,16 @@
+<ng-template #right>
+    <div (click)="goTo(rightContent['pageNumber'])" class="{{rightContent['status']}} item">
+        <i class="ui right chevron icon"></i>
+    </div>
+</ng-template>
+<ng-template #left>
+    <div (click)="goTo(leftContent['pageNumber'])" class="{{leftContent['status']}} item">
+        <i class="ui left chevron icon"></i>
+    </div>
+</ng-template>
+
+<div *ngIf="hasItems" class="ui inverted pagination menu">
+    <div *ngIf="left; then left"></div>
+    <div *ngFor="let item of items" (click)="goTo(item.pageNumber)" class="ui {{item.status}} item">{{item.content}}</div>
+    <div *ngIf="right; then right"></div>
+</div>

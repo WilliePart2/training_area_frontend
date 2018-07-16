@@ -1,0 +1,10 @@
+@media(max-width: 767px) {
+    .ui.fields.mod-fields {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+    }
+    .ui.fields.mod-fields .field {
+        margin-top: 10px;
+    }
+}

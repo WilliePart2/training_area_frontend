@@ -1,0 +1,3 @@
+export const MESSAGE = 'MESSAGE';
+export const SUCCESS_MESSAGE = 'SUCCESS_MESSAGE';
+export const ERROR_MESSAGE = 'ERROR_MESSAGE';

@@ -1,0 +1,138 @@
+/**
+    base styles for container
+ */
+.user {
+    width: 100%;
+    padding: 0;
+    margin: 10px 0;
+}
+.ui.header.user .content {
+    width: calc(100% - 3.5rem);
+}
+
+.ui.header .content .user-main {
+    width: 100%;
+    display: flex;
+    flex-flow: nowrap row;
+    justify-content: space-between;
+}
+.ui.header .content .user-main .user-main--username {
+    cursor: pointer;
+}
+.ui.header .content .user-main .usr-main--rating {
+
+}
+/**
+    end base style for container
+ */
+
+/**
+    styles for block which contain information about user
+ */
+.ui.header .sub.header.user-info {
+    display: flex;
+    flex-flow: nowrap row;
+    justify-content: space-between;
+}
+.ui.header .sub.header.user-info, .ui.header .sub.header.user-info * {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+.ui.header .sub.header.user-info .user-info--type {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1em;
+    padding-top: calc(((1.5rem + 10px) - 1em) / 2);
+    margin: 0;
+}
+.ui.header .sub.header.user-info .user-info--state {
+    display: block;
+    float: right;
+    margin: 5px 0;
+}
+/**
+    begin styles for information item
+    this item contains one peace of information about user
+ */
+.ui.header .sub.header.user-info .user-info--state .user-info--state_item {
+    position: relative;
+    display: inline-block;
+}
+.ui.header .sub.header.user-info .user-info--state .user-info--state_item .user-info--state_item-image {
+    width:1.5rem;
+    height: 1.5rem;
+    display: block;
+    float: left;
+}
+.ui.header .sub.header.user-info .user-info--state .user-info--state_item .user-info--state_item-value {
+    display: block;
+    float: right;
+    width: 2rem;
+    height: 1.5rem;
+    line-height: 1em;
+    padding: calc((1.5rem - 1em) / 2) 5px;
+    text-align: center;
+}
+.ui.header .sub.header.user-info .user-info--state .user-info--state_item .user-info--state_item-description {
+    position: absolute;
+    bottom: 100%;
+    right: -999rem;
+    line-height: 30px;
+    white-space: nowrap;
+    background-color: rgba(0, 0, 0, .8);
+    margin: 5px 0 5px 5px;
+    border-radius: 5px;
+    color: white;
+    padding: 5px;
+    opacity: 0;
+    transition: opacity .3s ease;
+}
+.ui.header .sub.header.user-info .user-info--state .user-info--state_item:hover .user-info--state_item-description {
+    right: 0;
+    opacity: 1;
+}
+.ui.header .sub.header.user-info .user-info--state .user-info--state_item .user-info--state_item-description:after {
+    content: '';
+    position: absolute;
+    border-width: 5px;
+    border-color: rgba(0, 0, 0, .8) transparent transparent transparent;
+    border-style: solid;
+    top: 100%;
+    right: .75rem;
+    margin-right: -5px;
+}
+
+.ui.header .sub.header.user-info .user-info--state .user-info--state_item .user-info--state_item-description .description-header {
+    font-weight: bold;
+    font-size: 1rem;
+    border-bottom: 1px solid white;
+    margin: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ui.header .sub.header.user-info .user-info--state .user-info--state_item .user-info--state_item-description .description-content {
+    margin: 5px;
+}
+/**
+    end styles for information item
+ */
+/**
+    end styles for main information block
+ */
+
+/**
+    auxiliary styles
+ */
+.ui.segment {
+    margin: .5rem 0;
+}
+
+.ui.fitted.divider {
+    margin: 5px 0;
+}
+/**
+    auxiliary styles end
+ */

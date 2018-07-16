@@ -1,0 +1,21 @@
+<div class="ui stackable centered equal wide grid">
+    <div class="twelve wide column">
+        <router-outlet></router-outlet>
+    </div>
+    <div class="four wide column">
+        <div class="ui vertical fluid secondary left pointing menu">
+            <a routerLink="/mentor/training/search-plans" routerLinkActive="active" class="item">
+                Поиск
+            </a>
+            <a routerLink="/mentor/training" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="item">
+                Собственные планы
+            </a>
+            <a routerLink="/mentor/training/current-plan" routerLinkActive="active" class="item">
+                Текущий план
+            </a>
+            <a routerLink="/mentor/training/completed-plans" routerLinkActive="active" class="item">
+                Пройденые планы
+            </a>
+        </div>
+    </div>
+</div>

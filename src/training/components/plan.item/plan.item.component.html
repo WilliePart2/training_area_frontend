@@ -1,0 +1,35 @@
+<div (mouseenter)="enableEditable()"
+     (mouseleave)="disableEditableMode()"
+>
+    <div *ngIf="!disableVisible">
+        <div *ngIf="((mode === 'edit' || mode === 'own') && (editable || focus)) && !disableEditable">
+            <div [ngStyle]="style">
+                <div class="ui transparent fluid input">
+                    <input *ngIf="!secondaryItem" type="text"
+                           [ngModel]="item"
+                           (ngModelChange)="modelChangeHandler($event)"
+                           (focus)="enableInFocus()"
+                           (blur)="disableInFocus()"
+                           #input
+                    />
+                    <input *ngIf="secondaryItem" type="text"
+                           [placeholder]="secondaryItem"
+                           [ngModel]="item"
+                           (ngModelChange)="modelChangeHandler($event)"
+                           (focus)="enableInFocus()"
+                           (blur)="disableInFocus()"
+                           #input
+                    />
+                </div>
+            </div>
+        </div>
+        <ng-container *ngIf="!focus">
+            <div *ngIf="(mode !== 'edit' && mode !== 'own') || !editable">
+                <div [ngStyle]="style">
+                    {{item || 0}}
+                </div>
+            </div>
+        </ng-container>
+    </div>
+    <div *ngIf="disableVisible" [ngStyle]="style"></div>
+</div>

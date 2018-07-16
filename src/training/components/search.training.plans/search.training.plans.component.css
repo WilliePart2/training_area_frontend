@@ -1,0 +1,14 @@
+@media(max-width: 767px) {
+    .ui.form .ui.inline.fields {
+        display: flex;
+        flex-flow: nowrap column;
+        align-items: flex-start;
+    }
+    .ui.form .fields .field {
+        margin-top: 5px;
+    }
+}
+.ui.segment.relative-table {
+    overflow: auto;
+    border-radius: 5px;
+}

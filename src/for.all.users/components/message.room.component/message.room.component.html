@@ -1,0 +1,67 @@
+<sui-dimmer [isDimmed]="dimmed" [isClickable]="false">
+    <div class="ui large text loader">
+        {{dimmerMessage}}
+    </div>
+</sui-dimmer>
+<div #msgContainer class="msg msg-item msg-view" [style.height.px]="totalMessageContainerHeight">
+        <!-- block for showing messages -->
+        <ng-container>
+            <div #msgViewContainer class="ui comments msg-item msg-view--container" [style.height.px]="messageViewHeight">
+                <!--  -->
+                <div class="msg-dimmer" [class.load]="loadingNewMessages"></div>
+                <div class="msg-report-new-messages msg-has-new-messages" [class.msg-has-new-messages]="unreadedMessages && unreadedMessages.length">
+                    <span class="msg-new-messages--label">
+                        {{_commonLabels.NEW_MESSAGES}}
+                    </span>
+                    {{countNewMessages}}
+                </div>
+                <app-message-room-item 
+                    *ngFor="let message of messages" 
+                    [message]="message" 
+                    [members]="members" 
+                    (dropMessage)="dropMessage($event)"
+                    [@dropingMessage]="true"
+                    [messageContainer]="msgViewContainer"
+                    [isScrollInStartPosition]="isScrollInStartPosition">
+                </app-message-room-item>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="isInit && (!messages || !messages.length)">
+            <div class="ui info message">
+                {{_commonLabels.EMPTY_MESSAGES}}
+            </div>
+        </ng-container>
+        <div class="msg-item msg-form--initial">
+            <div class="msg-item msg-form--initial_btn"
+                 [class.msg-form--initial_show]="isMessageWriting"
+                 [class.msg-form--initial_hide]="!isMessageWriting"
+                 (click)="toggleMessageWriting()">
+                <i class="msg-item envelope icon"></i>
+            </div>
+        </div>
+    <div [@messageField]="true"
+         class="msg-form--container"
+         [class.msg-form--container_show]="isMessageWriting"
+         [class.msg-form--container_hide]="!isMessageWriting">
+        <!-- displaying members -->
+        <div class="msg-item msg-header">
+            <app-message-room-header
+                    *ngFor="let member of members; let memberIndex = index;"
+                    [member]="member"
+                    [hover]="headerHoverStorage[memberIndex]"
+                    (hoverChange)="headerHoverHandler(memberIndex, $event)">
+            </app-message-room-header>
+        </div>
+        <!-- form for message sending -->
+        <div class="sixteen wide mobile column bottom aligned">
+            <form class="ui form msg-item msg-form">
+                <div class="ui fluid input msg-item msg-form--input">
+                    <textarea #messageTextarea class="msg-item msg-form--input_field" name="message" [(ngModel)]="message"></textarea>
+                </div>
+                <button [disabled]="!message || !message.trim()" class="ui blue button msh-item msg-form--btn" [class.loading]="isFormDimmerEnabled" (click)="sendMessage()">
+                    {{_commonLabels.SEND_MSG_BTN}}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

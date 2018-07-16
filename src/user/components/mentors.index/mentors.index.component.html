@@ -1,0 +1,28 @@
+<!-- dimmer -->
+<sui-dimmer [isDimmed]="dimmed" [isClickable]="false">
+    <div class="ui large text loader">
+        {{dimmerMessage}}
+    </div>
+</sui-dimmer>
+<!-- error -->
+<div *ngIf="hasError" class="ui error message">
+    {{_errorMessage}}
+</div>
+<!-- empty data message -->
+<div *ngIf="hasEmptyData" class="ui info message">
+    {{_emptyDataMessage}}
+</div>
+<!-- body -->
+<app-user-view
+        [userData]="mentor"
+        (reject)="removeMentor($event)"
+        [mode]="'own'"
+></app-user-view>
+
+<!-- карточка ментора которому отправлен запрос на связывание -->
+<div *ngIf="hasRequestedMentor" class="ui horizontal divider">Наставник к которому хотите вступить в ученики</div>
+<app-user-view
+        [userData]="requestedMentor"
+        [mode]="'own'"
+        (reject)="resetRequestToMentor($event)"
+></app-user-view>

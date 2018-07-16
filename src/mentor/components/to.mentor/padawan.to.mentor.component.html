@@ -1,0 +1,53 @@
+<!-- dimmer message -->
+<sui-dimmer class="page" [isDimmed]="dimmed" [isClickable]="false">
+    <div class="ui large text loader">
+        {{dimmerMessage}}
+    </div>
+</sui-dimmer>
+<!-- empty data -->
+<div *ngIf="hasEmptyData" class="ui info message">
+    {{_emptyDataMessage}}
+</div>
+<!-- error message -->
+<div *ngIf="hasError" class="ui error message">
+    {{_errorMessage}}
+</div>
+<!-- body -->
+<app-user-view
+        *ngFor="let user of  users; trackBy: userTracker" [userData]="user"
+        [parentObs]="userConfigObserver"
+        [permission]="true"
+        [mode]="'request'"
+        (accept)="manageUser($event, 'acceptUser')"
+        (reject)="manageUser($event, 'rejectUser')"
+></app-user-view>
+<!-- loader -->
+<app-load-item *ngIf="loadProcess"></app-load-item>
+
+<!--<div class="ui items">-->
+    <!--<div *ngIf="hasGlobalError" class="ui error message">-->
+        <!--{{_globalErrorMessage}}-->
+    <!--</div>-->
+    <!--<div *ngFor="let user of users" class="item">-->
+        <!--<div class="image"></div>-->
+        <!--<div class="content">-->
+            <!--<div class="header">{{user.username}}</div>-->
+            <!--<div class="meta" [userType]="user.type"></div>-->
+            <!--<div class="description">-->
+                <!--Количество пройденых тренировок: {{user.trainings}}-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="actions">-->
+            <!--<div>-->
+                <!--<a>Дополнительная информация</a>-->
+            <!--</div>-->
+            <!--<div (click)="acceptPadawan(user)">-->
+                <!--<a>Принять в ученики</a>-->
+            <!--</div>-->
+            <!--<div (click)="rejectPadawan(user)">-->
+                <!--<a>Отклонить предложение</a>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+<!--<pagination [totalCount]="totalCount" [pageSize]="step" [(currentPage)]="page"></pagination>-->

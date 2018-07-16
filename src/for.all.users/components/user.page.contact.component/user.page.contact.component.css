@@ -1,0 +1,8 @@
+.inline-cotainer {
+    overflow: hidden;
+}
+.ui .inline-item {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden; 
+}

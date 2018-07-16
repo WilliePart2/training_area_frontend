@@ -1,0 +1,49 @@
+<!-- Шаблоны для действий пользователей -->
+<ng-template #userAction>
+    <div *ngIf="type === 'user'">
+        <a>Стать учеником</a>
+    </div>
+</ng-template>
+<ng-template #mentorAction>
+    <div *ngIf="type === 'mentor'">
+        <a>Пригласить в ученики</a>
+    </div>
+</ng-template>
+
+<!-- Шаблоны для ролей пользователей -->
+<ng-template #mentor>
+    Наставник
+</ng-template>
+<ng-template #simpleUser>
+    Рядовой пользователь
+</ng-template>
+
+<!-- Карточки пользователей -->
+<div class="ui items">
+    <div *ngFor="let user of users" class="link item">
+        <div class="image"></div>
+        <div class="content">
+            <div *ngIf="hasError && errorAccount === user.username" class="ui error message">
+                {{_errorMessage}}
+            </div>
+            <div class="header">{{user.username}}</div>
+            <div class="meta">
+                <div *ngIf="user.type === 'mentor'; then mentor else simpleUser"></div>
+            </div>
+            <div class="description" [user]="user">
+                <!-- Контент будет создаваться директивой -->
+            </div>
+        </div>
+        <div class="actions">
+            <div>
+                <a>Дополнительная информация</a>
+            </div>
+            <div (click)="sendRequestToMentor(user)">
+                <div *ngIf="user.type === 'mentor'; then userAction else mentorAction"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Пагинация -->
+<pagination [totalCount]="totalCount" [pageSize]="step" [(currentPage)]="page"></pagination>

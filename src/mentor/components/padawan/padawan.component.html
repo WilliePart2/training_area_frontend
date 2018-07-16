@@ -1,0 +1,20 @@
+<div>
+    <div class="ui inverted segment mod-segment">
+        <div class="ui secondary inverted menu mod-menu">
+            <a class="item" [routerLink]="allUsersLink" routerLinkActive="active">
+                {{_commonLabels.USERS_MAIN_MENU_ALL_USERS}}
+            </a>
+            <a class="item" [routerLink]="mainLink" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                {{userType === 'mentor' ? _commonLabels.USERS_MENTOR_SIDE_MAIN_MENU_LEARNERS_LABEL : _commonLabels.USERS_PADAWAN_SIDE_MAIN_MENU_MENTOR}}
+            </a>
+            <a class="item" [routerLink]="invitedUserLinks" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                {{userType === 'mentor' ? _commonLabels.USERS_MENTOR_SIDE_MAIN_MENU_SENDED_INVITES : _commonLabels.USERS_PADAWAN_SIDE_MAIN_MENU_SENDED_REQUESTS}}
+            </a>
+            <a class="item" [routerLink]="requestedUsersLinks" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                {{userType === 'mentor' ? _commonLabels.USERS_MENTOR_SIDE_MAIN_MENU_RECEIVED_INVITES : _commonLabels.USERS_PADAWAN_SIDE_MAIN_MENU_RECEIVED_INVITES}}
+            </a>
+        </div>
+    </div>
+    <div class="ui divider"></div>
+    <router-outlet></router-outlet>
+</div>

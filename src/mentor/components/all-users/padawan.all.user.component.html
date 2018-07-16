@@ -1,0 +1,24 @@
+<!-- error message -->
+<div *ngIf="hasError" class="ui error message">
+    {{_errorMessage}}
+</div>
+<!-- dimmer message -->
+<sui-dimmer class="page" [isDimmed]="dimmed" [isClickable]="false">
+    <div class="ui large text loader">
+        {{dimmerMessage}}
+    </div>
+</sui-dimmer>
+<!-- main body -->
+<app-user-view
+        *ngFor="let user of users"
+        [userData]="user"
+        [parentObs]="userConfigObserver"
+        [mode]="'view'"
+        (inviteRequest)="bindRequest($event)"
+        (sendMessage)="sendMessageToUser($event)"
+>
+</app-user-view>
+<!-- loader -->
+<div [@appear]="true" [@leave]="true">
+    <app-load-item *ngIf="loadPerforming"></app-load-item>
+</div>

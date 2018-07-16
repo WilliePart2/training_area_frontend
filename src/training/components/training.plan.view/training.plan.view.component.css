@@ -1,0 +1,79 @@
+.ui.header.user-header {
+    width: 100%;
+    display: flex;
+    flex-flow: nowrap row;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ui.header.user-header .content.user-header--content{
+    width: calc(100% - (3.5rem + 10px));
+    box-sizing: border-box;
+    margin: 5px;
+    display: flex;
+    flex-flow: nowrap column;
+    justify-content: flex-start;
+}
+.content.user-header--content .user-header--content_username {
+    padding: 0 5px;
+}
+.ui.header.user-header .image.user-header--image {
+    width: 3.5rem;
+}
+.header .sub.header.user-description {
+    display: flex;
+    flex-flow: nowrap row;
+    width: 100%;
+    align-items: center;
+    padding: 0 5px;
+}
+.sub.header.user-description .user-description--label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.sub.header.user-description .user-description--btn {
+    margin-left: auto;
+}
+
+.ui.segment.mod-list-container {
+    padding: 0;
+}
+.ui.list.mod-list {
+    display: flex;
+    flex-flow: nowrap column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+.ui.list.mod-list .item {
+    display: flex;
+    flex-wrap: nowrap;
+    margin: 0;
+    padding-left: 0;
+    padding-right: 0;
+    width: 100%;
+}
+.ui.list.mod-list .mod-list--label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ui.list.mod-list .item .mod-list--checkbox {
+    margin: 0 0 0 auto;
+    padding: 0;
+}
+.ui.list.mod-list .item .mod-list--checkbox .checkbox {
+    width: 1rem;
+}
+
+.table-container {
+    overflow: auto;
+}
+.ui.table.mod-table {
+    white-space: normal;
+}
+@media(max-width: 767px) {
+    .ui.fields .field {
+        margin-top: 10px;
+    }
+    .table-container {
+        margin-top: 10px;
+    }
+}

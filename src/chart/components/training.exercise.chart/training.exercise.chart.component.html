@@ -1,0 +1,29 @@
+<div>
+    <div>
+        <canvas #layoutExerciseChart></canvas>
+    </div>
+    <form class="ui form center aligned">
+        <div class="ui inline fields mod-fields">
+            <div class="field">
+                <sui-radio-button name="trainingParams" value="averageInt" [(ngModel)]="characteristic">
+                    Интенсивность
+                </sui-radio-button>
+            </div>
+            <div class="field">
+                <sui-radio-button name="trainingParams" value="averageWeight" [(ngModel)]="characteristic">
+                    Средний вес
+                </sui-radio-button>
+            </div>
+            <div class="field">
+                <sui-radio-button name="trainingParams" value="tonnage" [(ngModel)]="characteristic">
+                    Тоннаж
+                </sui-radio-button>
+            </div>
+            <div class="field">
+                <sui-radio-button name="trainingParams" value="KPSH" [(ngModel)]="characteristic">
+                    КПШ
+                </sui-radio-button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,53 @@
+<div 
+    [@dropingMessage]="true" 
+    #msgItem class="msg-wrapp msg-container" 
+    [class.msg-own--container]="isOwnMessage" 
+    [class.msg-other--container]="!isOwnMessage"
+    >
+<div class="msg-view--item comment" 
+    [class.not-readed]="!message.isConsidered && !isOwnMessage"
+    [class.msg-view--item__own]="isOwnMessage" 
+    [class.msg-view--item__other]="!isOwnMessage"
+    >
+
+    <sui-dimmer class="inverted" [isDimmed]="dimmed" [isClickable]="false">
+        <div class="ui large text loader">
+            {{dimmerMessage}}
+        </div>
+    </sui-dimmer>
+
+    <div *ngIf="!isOwnMessage" class="avatar msg-view--item_avatar">
+        <img [src]="sender?.avatar" />
+    </div>
+    <div class="msg-view--item_content content">
+        <div class="msg-view--item_content__meta">
+            <a *ngIf="!isOwnMessage" class="author msg-view--item_author" (click)="goToUser()">
+                {{sender?.username}}
+            </a>
+            <div class="metadata">
+                <div class="date">
+                    {{message?.messageDate}}
+                </div>
+            </div>
+            <a *ngIf="isOwnMessage" class="author msg-view--item_author" (click)="goToUser()">
+                {{sender?.username}}
+            </a>
+        </div>
+        <div class="text">
+            {{message?.message}}
+        </div>
+        <div class="msg-view--item_content__btn" (click)="deleteMessage()">
+            <div *ngIf="!isOwnMessage" class="msg-view--item_content__btn--label">
+                {{_commonLabels.DELETE_MESSAGE}}
+            </div>
+            <i class="delete icon"></i>
+            <div *ngIf="isOwnMessage" class="msg-view--item_content__btn--label">
+                {{_commonLabels.DELETE_MESSAGE}}
+            </div>
+        </div>
+    </div>
+    <div *ngIf="isOwnMessage" class="avatar msg-view--item_avatar">
+        <img [src]="sender?.avatar" />
+    </div>
+</div>
+</div>

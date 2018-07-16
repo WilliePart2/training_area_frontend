@@ -1,0 +1,26 @@
+<!-- dimmer -->
+<sui-dimmer class="page" [isDimmed]="dimmed" [isClickable]="false">
+    <div class="ui large text loader">
+        {{dimmerMessage}}
+    </div>
+</sui-dimmer>
+<!-- error message -->
+<div *ngIf="hasError" class="ui error message">
+    {{_errorMessage}}
+</div>
+<!-- empty data message -->
+<div *ngIf="hasEmptyData" class="ui info message">
+    {{_emptyDataMessage}}
+</div>
+<!-- my users -->
+<div>
+    <app-user-view
+            *ngFor="let user of padawans; trackBy: userTracker"
+            [userData]="user"
+            [permission]="true"
+            [parentObs]="userConfigObserver"
+            [mode]="'own'"
+            (reject)="rejectLearner($event)"
+    ></app-user-view>
+</div>
+<app-load-item *ngIf="loadProcess"></app-load-item>

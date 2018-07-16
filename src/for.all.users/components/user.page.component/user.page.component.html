@@ -1,0 +1,42 @@
+<!-- page dimmer -->
+<sui-dimmer class="page inverted" [isDimmed]="dimmed" [isClickable]="false">
+    <div class="ui large text loader">
+        {{dimmerMessage}}
+    </div>
+</sui-dimmer>
+
+<!-- page content -->
+<div *ngIf="hasError" class="ui error message">
+    {{_errorMessage}}
+</div>
+<div *ngIf="essentialData && !hasError" class="ui centered stackable padded grid">
+    <div class="sixteen wide tablet four wide computer column">
+        <div class="ui grid">
+            <div class="eight wide tablet sixteen wide computer column">
+                <app-user-page-avatar [avatar]="essentialData.avatar"
+                    [username]="essentialData.username"
+                    [type]="essentialData.type">
+                </app-user-page-avatar>
+            </div>
+            <div class="eight wide tablet sixteen wide computer column">
+                <div *ngIf="mode !== 'ownPage' && userId !== selfId">
+                    <app-user-page-main-btn [type]="essentialData.type"></app-user-page-main-btn>
+                    <div class="ui hidden divider"></div>
+                </div>
+                <app-user-page-relation-users [type]="essentialData.type" [username]="essentialData.username" [users]="essentialData.relations">
+                </app-user-page-relation-users>
+            </div>
+        </div>
+    </div>
+    <div class="sixteen wide tablet twelve wide computer column">
+        <app-user-page-header [username]="essentialData.username"
+            [ratin]="essentialData.rating"
+            [userId]="essentialData.id" 
+            [followed]="essentialData.followedId" >
+        </app-user-page-header>
+        <div class="ui hidden divider"></div>
+        <app-user-page-contacts [contacts]="essentialData.contacts"></app-user-page-contacts>
+        <app-user-page-posts [userId]="userId" [selfId]="selfId" [isParentDimmerEnabled]="dimmed" (postsLoaded)="postsLoadedHandler()">
+        </app-user-page-posts>
+    </div>
+</div>

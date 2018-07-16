@@ -1,0 +1,41 @@
+<div class="list-container" #tableContainer>
+    <table [class.inverted]="inverted" class="ui unstackable sing line selectable table">
+        <thead>
+            <tr>
+                <th *ngFor="let headItem of headerData">
+                    {{headItem}}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let bodyRowItem of bodyData; let rowIndex = index; trackBy: bodyRowTracker"
+                [class.cursor-pointing]="cursorPointer"
+                class="tr-container"
+                (click)="emitEvent(bodyRowItem.id)"
+            >
+                <!-- block for main information -->
+                <td *ngFor="let bodyDataItem of bodyRowItem.data; let eltIndex = index; let first = first;">
+                    <div class="tr-container">
+                        {{bodyDataItem}}
+                        <div *ngIf="first" #readme></div>
+                    </div>
+                </td>
+                <td *ngIf="hasRating">
+                    <sui-rating [className]="ratingStyle" [ngModel]="ratingValue[rowIndex]" [maximum]="5" [isReadonly]="true"></sui-rating>
+                </td>
+                <td *ngIf="hasAction" #actionContainer>
+
+                </td>
+
+                 <!--block form readme -->
+                <!--<td *ngIf="specialValuesContainer[_spValNames.readme]"-->
+                     <!--class="table-item tr-readme tr-readme&#45;&#45;dark"-->
+                     <!--[class.tr-readme&#45;&#45;light]="inverted"-->
+                    <!--#readme-->
+                <!--&gt;-->
+                    <!--&lt;!&ndash;<div #readme></div>&ndash;&gt;-->
+                <!--</td>-->
+            </tr>
+        </tbody>
+    </table>
+</div>

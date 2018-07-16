@@ -1,0 +1,23 @@
+.microcicle-item {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+.compact-table {
+    width: 100%;
+    table-layout: fixed;
+}
+.compact-table--item tr th, .compact-table--item tr td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.compact-table--item tr th:first-child, .compact-table--item tr td:first-child {
+    white-space: normal;
+}
+.compact-table .compact-table--item_resp-elt {
+    white-space: nowrap;
+}
+
+.responsive-table {
+    overflow: auto;
+}

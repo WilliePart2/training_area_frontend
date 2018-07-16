@@ -1,0 +1,99 @@
+<div class="ui segment">
+    <!-- dimmer message -->
+    <sui-dimmer class="page" [isDimmed]="dimmed" [isClickable]="false">
+        <div class="ui large text loader">
+            {{dimmerMessage}}
+        </div>
+    </sui-dimmer>
+    <!-- std error  message -->
+    <div *ngIf="hasError" class="ui error message">
+        {{_errorMessage}}
+    </div>
+    <!-- specific error message -->
+    <div class="ui error message" *ngIf="showErrorMessage">
+        {{_errorLabels.REGISTRATION_USER_ALREADY_EXISTS}}
+    </div>
+    <div class="ui header center aligned">{{_commonLabels.MAIN_LABEL}}</div>
+    <div class="ui divider"></div>
+    <form class="ui form" (ngSubmit)="onSubmit()" [ngClass]="{error: registrationForm.invalid || !passwordValid}" #registrationForm="ngForm">
+        <div class="field">
+            <label>{{_commonLabels.LOGIN_LABEL}}</label>
+            <div class="ui left icon input">
+                <i class="ui user icon"></i>
+                <input type="text" name="username" [(ngModel)]="name" #username="ngModel" required />
+            </div>
+            <div *ngIf="username.touched && username.invalid" class="ui error message">
+                {{_errorLabels.REGISTRATION_EMPTY_LOGIN_FIELD}}
+            </div>
+        </div>
+        <div class="field">
+            <label>{{_commonLabels.EMAIL_LABEL}}</label>
+            <div class="ui left icon input">
+                <i class="ui mail icon"></i>
+                <input type="text" name="email" [(ngModel)]="email" #userEmail="ngModel" required pattern="[a-zA-Z_]+@[a-zA-Z_]+\.[a-zA-Z]{1,5}" />
+            </div>
+            <div *ngIf="userEmail.touched && userEmail.invalid" class="ui error message">
+                {{_errorLabels.REGISTRATION_EMPTY_EMAIL_FIELD}}
+            </div>
+        </div>
+        <div class="field">
+            <label>{{_commonLabels.PASSWORD_LABEL}}</label>
+            <div class="ui left icon input">
+                <i class="ui key icon"></i>
+                <input type="password" name="password" [(ngModel)]="password" #userPassword="ngModel" required (change)="validatePassword()" />
+            </div>
+            <div *ngIf="userPassword.touched && userPassword.invalid" class="ui error message">
+                {{_errorLabels.REGISTRATION_EMPTY_PASSWORD_FIELD}}
+            </div>
+        </div>
+        <div class="field">
+            <label>{{_commonLabels.REPEAT_PASSWORD_LABEL}}</label>
+            <div class="ui left icon input">
+                <i class="ui key icon"></i>
+                <input type="password"
+                       name="passwordRepeat"
+                       [(ngModel)]="repeatPassword"
+                       #userRepeatPassword="ngModel"
+                       required
+                       (change)="validatePassword()" />
+            </div>
+            <div *ngIf="userRepeatPassword.touched && !passwordValid" class="ui error message">
+                {{_errorLabels.REGISTRATION_PASSWORDS_DONT_EQUAL}}
+            </div>
+        </div>
+        <div class="ui horizontal divider">{{_commonLabels.CHOOSE_ACCOUNT_TYPE}}</div>
+        <div class="ui inline fields">
+            <div class="field">
+                <sui-radio-button type="radio" name="group" value="user" [(ngModel)]="group" (click)="selectGroup()">
+                    {{_commonLabels.ACCOUNT_TYPE_SIMPLE_USER}}
+                </sui-radio-button>
+                <!--<label>-->
+                    <!--<div class="ui radio input">-->
+                        <!--<input type="radio" name="group" value="user" [(ngModel)]="group" (click)="selectGroup()" />-->
+                    <!--</div>-->
+                    <!--{{_commonLabels.ACCOUNT_TYPE_SIMPLE_USER}}-->
+                <!--</label>-->
+            </div>
+            <div class="field">
+                <sui-radio-button type="radio" name="group" value="mentor" [(ngModel)]="group" (click)="selectGroup()">
+                    {{_commonLabels.ACCOUNT_TYPE_MENTOR}}
+                </sui-radio-button>
+                <!--<label>-->
+                    <!--<div class="ui radio input">-->
+                        <!--<input type="radio" name="group" value="mentor" [(ngModel)]="group" (click)="selectGroup()" />-->
+                    <!--</div>-->
+                    <!--{{_commonLabels.ACCOUNT_TYPE_MENTOR}}-->
+                <!--</label>-->
+            </div>
+        </div>
+        <button [disabled]="(username.untouched || username.invalid) ||
+        (userEmail.untouched || userEmail.invalid) ||
+        (userPassword.untouched || userPassword.invalid) ||
+        (userRepeatPassword.untouched || userRepeatPassword.invalid) ||
+        (!selectedGroup) || !passwordValid"
+                type="submit"
+                class="ui fluid basic button">
+            {{_commonLabels.SUBMIT_BTN}}
+        </button>
+    </form>
+</div>

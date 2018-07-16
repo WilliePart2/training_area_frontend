@@ -1,0 +1,50 @@
+<ng-template let-modal="modal" #usersModal>
+    <div class="header">
+        Ученики наставника "{{username}}"
+    </div>
+    <div class="content">
+        <div class="ui selection list">
+            <div *ngFor="let user of users" class="item" (click)="viewUserPage(user.id)">
+                <div class="ui image header">
+                    <div class="image">
+                        <img [src]="user.avatar" />
+                    </div>
+                    <div class="content">
+                        {{user.username}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui right floated basic button" (click)="modal.deny()">
+            Закрыть
+        </div>
+        <div class="ui hidden clearing fitted divider"></div>
+    </div>
+</ng-template>
+<div class="ui top attached segment">
+    <div class="ui tiny header">
+        <div class="content">
+            {{type === 'mentor' ? 'Ученики' : 'Наставник'}}
+        </div>
+    </div>
+</div>
+<div class="ui {{(users && users.length <= 10) || !users ? 'bottom' : ''}} attached segment">
+    <div class="ui selection list">
+        <div *ngFor="let user of users" class="item" (click)="viewUserPage(user.id)">
+            <div class="ui image header">
+                <div class="image">
+                    <img [src]="user.avatar" />
+                </div>
+                <div class="content">
+                    {{user.username}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="users && users.length > 10" class="ui bottom attached segment">
+    <div class="ui tiny right floated basic button" (click)="viewMoreUsers()">Больше...</div>
+    <div class="ui fitted clearing hidden divider"></div>
+</div>

@@ -1,0 +1,31 @@
+<!-- Статусы пользователей -->
+<ng-template #mentorType>Наставник</ng-template>
+<ng-template #userType>Рядовой пользователь</ng-template>
+
+<!-- Карточки пользователей -->
+<div *ngIf="hasRequestFromMentors" class="ui padded celled items">
+    <div *ngFor="let mentor of mentors" class="item">
+        <div *ngIf="hasError && accountError === mentor.username" class="ui error message">
+            {{_errorMessage}}
+        </div>
+        <div class="image"></div>
+        <div class="content">
+            <div class="header">{{mentor.username}}</div>
+            <div class="meta" [userType]="mentor.type"></div>
+            <div class="description" [user]="mentor">
+                <!-- Тут будет контент сгенерированый директивой -->
+            </div>
+        </div>
+        <div class="actions">
+            <div>
+                <a (click)="acceptOffer(mentor)">Принять предложение</a>
+            </div>
+            <div>
+                <a (click)="rejectOffer(mentor)">Отклонить предложение</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Пагинация -->
+<pagination [totalCount]="totalCount" [pageSize]="step" [(currentPage)]="page"></pagination>

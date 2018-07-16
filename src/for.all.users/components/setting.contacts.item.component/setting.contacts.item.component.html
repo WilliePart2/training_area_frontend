@@ -1,0 +1,55 @@
+<div (mouseover)="showButtons()" (mouseleave)="hideButtons()">
+    <div class="ui top attached header">
+        <div class="content">
+            {{fieldValue.label}}
+        </div>
+        <div *ngIf="isButtonShow" class="ui right floated buttons">
+            <button *ngIf="!isEdit" 
+                    class="ui very compact mini icon basic button" 
+                    (click)="startEdit()"
+                    [disabled]="hasFieldError">
+                <i class="edit icon"></i>
+            </button>
+            <button *ngIf="isEdit" 
+                    class="ui very compact mini icon basic button" 
+                    (click)="saveResult()"
+                    [disabled]="hasFieldError">
+                <i class="save icon"></i>
+            </button>
+        </div>
+    </div>
+    <div class="ui bottom attached segment">
+        <sui-dimmer class="inverted" [isDimmed]="dimmed" [isClickable]="false">
+                <div class="ui text loader">
+                    {{dimmerMessage}}
+                </div>
+        </sui-dimmer>
+        <form class="ui form"  #form="ngForm" [ngClass]="{error: form.invalid}">
+            <div class="inline fields without-margin-fields" id="without-margin">
+                <div class="two wide field">
+                    <div class="ui mini image middle aligned">
+                        <img [src]="fieldValue.icon" />
+                    </div>
+                </div>
+                <div class="fourteen wide field without-padding">
+                    <ng-container *ngIf="isEdit">
+                        <div class="ui fluid input">
+                            <input type="text" [(ngModel)]="fieldValue.value" [name]="fieldValue.group + '_' + fieldValue.label"
+                            [pattern]="pattern" required #field="ngModel"
+                            />
+                        </div>
+                        <div style="display:none" *ngIf="field && (((field.touched && field.invalid) && showError()) || hideError())"></div>
+                    </ng-container>
+                    <a *ngIf="!isEdit">{{fieldValue.value || 'Отсутствует'}}</a>
+                </div>
+            </div>
+            <div class="sixteen wide field" *ngIf="hasFieldError">
+                <div class="ui fitted hidden divider"></div>
+                <div class="ui error message">
+                    {{fieldErrorMessage}}
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="ui hidden fitted divider"></div>
+</div>

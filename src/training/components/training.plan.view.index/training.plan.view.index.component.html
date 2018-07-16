@@ -1,0 +1,29 @@
+<div>
+    <div class="ui left floated basic segment">
+        <div class="ui header">
+            <div class="sub header">{{_commonLabels.TP_INDEX_LABEL_RETING}}</div>
+            <div class="content content-with-loader">
+                <sui-rating class="start" [maximum]="5" [(ngModel)]="rating"></sui-rating>
+                <div *ngIf="ratingChangeProcess" class="ui custom-dimmer show">
+                    <div class="ui small loader"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ui right floated compact menu">
+        <a routerLink="/mentor/training/training-plan-view"
+           [queryParams]="{id: id}"
+           routerLinkActive="active"
+           [routerLinkActiveOptions]="{exact: true}"
+           class="item"
+        >
+            {{_commonLabels.TP_INDEX_LABEL_PLAN_BTN}}
+        </a>
+        <a routerLink="comments" [queryParams]="{id: id}" routerLinkActive="active" class="item">
+            {{_commonLabels.TO_INDEX_LABEL_COMMENT_BTN}}
+        </a>
+    </div>
+    <div class="ui clearing hidden fitted divider"></div>
+    <div class="ui divider"></div>
+    <router-outlet></router-outlet>
+</div>

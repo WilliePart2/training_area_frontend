@@ -1,0 +1,34 @@
+<div class="ui image fluid header message-topic" (click)="showMessageRoom()">
+    <!-- dimmer -->
+    <sui-dimmer class="inverted" [isDimmed]="dimmed" [isClickable]="false">
+        <div class="ui large text loader">
+            {{dimmerMessage}}
+        </div>
+    </sui-dimmer>
+    <!-- body -->
+    <div class="image message-topic--image">
+        <img [src]="creator?.avatar" />
+    </div>
+    <div class="content message-topic--content">
+        <div class="description message-topic--content_item">
+            <span>{{item?.roomTopic}}</span>
+            <div class="ui horithontal right floating green label" *ngIf="item.newMessages" 
+                suiPopup [popupText]="_commonLabels.NEW_MESSAGES" popupInverted popupPlacement="left top">
+                    {{item?.newMessages}}
+            </div>
+        </div>
+        <div class="ui fitted divider"></div>
+        <div class="sub header message-topic--content_item">
+            <div *ngFor="let member of item.members" class="ui label message-topic--content_item__label" data-user="true" 
+            (click)="showUser($event, member.id)">
+                {{member.username}}
+            </div>
+        </div>
+    </div>
+    <div class="msg-topic--item msg-topic--item_delete-btn" (click)="deleteMessageRoom($event)">
+        <span class="delete_btn--label">
+            {{_commonLabels.DELETE_CHAT_ROOM}}
+        </span>
+        <i class="delete icon"></i>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+.relative-table {
+    overflow: auto;
+}
+
+@media(max-width: 767px) {
+    .form .ui.fields {
+        display: flex;
+        flex-flow: nowrap column;
+        align-items: flex-start;
+    }
+    .ui.fields .field {
+        margin-top: 10px;
+    }
+}

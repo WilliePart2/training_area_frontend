@@ -1,0 +1,278 @@
+<!-- dividing row -->
+<tr>
+    <td colspan="11" *ngIf="hasError">
+        <div class="ui fluid inverted error message">{{_errorMessage}}</div>
+    </td>
+</tr>
+<!-- row total state -->
+<tr>
+    <td class="top aligned">
+        <div [ngStyle]="style">{{index + 1}}</div>
+    </td>
+    <td class="top aligned">
+        <div [ngStyle]="style">
+            <i *ngIf="mode === 'edit'" class="link delete red icon" (click)="deleteExercise()"></i>
+            <span>{{item.exerciseName}}</span>
+        </div>
+    </td>
+    <td class="top aligned">
+        <div [ngStyle]="style">{{item.oneRepeatMaximum}}</div>
+    </td>
+    <!-- training plan fields -->
+    <ng-container *ngIf="!isTrainingBegin && !isHanding && !isEditable">
+        <!-- weight -->
+        <td class="top aligned">
+            <plan-item
+            *ngFor="let planItem of item.plans; let i = index; trackBy: planTraker"
+            [item]="planItem.weight"
+            (itemChange)="changeWeight(i, $event)"
+            (focusOnItem)="setFocus('weight', i)"
+            (removeFocus)="resetFocus()"
+            [focus]="focusOnItem && focusOnItem.prop === 'weight' && focusOnItem.index === i"
+            [disableEditable]="mode === 'own'"
+            [mode]="mode"></plan-item>
+        </td>
+        <!-- repeats -->
+        <td class="top aligned">
+            <plan-item
+            *ngFor="let planItem of item.plans; let i = index; trackBy: planTraker"
+            [item]="planItem.repeats"
+            (itemChange)="changeRepeats(i , $event)"
+            (focusOnItem)="setFocus('repeats', i)"
+            (removeFocus)="resetFocus()"
+            [focus]="focusOnItem && focusOnItem.prop === 'repeats' && focusOnItem.index === i"
+            [disableEditable]="mode === 'own'"
+            [mode]="mode"></plan-item>
+        </td>
+        <!-- repeat sections -->
+        <td class="top aligned">
+            <plan-item
+            *ngFor="let planItem of item.plans; let i = index; trackBy: planTraker"
+            [item]="planItem.repeatSection"
+            (itemChange)="changeRepeatSection(i, $event)"
+            (focusOnItem)="setFocus('repeatSection', i)"
+            (removeFocus)="resetFocus()"
+            [focus]="focusOnItem && focusOnItem.prop === 'repeatSection' && focusOnItem.index === i"
+            [disableEditable]="mode === 'own'"
+            [mode]="mode"></plan-item>
+        </td>
+    </ng-container>
+    <!-- Fields witch display plan -->
+    <ng-container *ngIf="isTrainingBegin || isHanding || isEditable">
+        <td>
+            <!-- weight -->
+            <ng-container *ngFor="let planItem of item.plans">
+                <div *ngFor="let preparePlan of planItem.dataForPerform; let planIndex = index; trackBy: planTraker">
+                    <plan-item *ngIf="planIndex < 1" 
+                    [item]="preparePlan.planWeight" 
+                    [mode]="mode"
+                    [disableEditable]="true" ></plan-item>
+                    <div [ngStyle]="style" *ngIf="planIndex >= 1" ></div>
+                </div>
+            </ng-container>
+        </td>
+        <td>
+            <!-- Repeats -->
+            <ng-container *ngFor="let planItem of item.plans">
+                <div *ngFor="let preparePlan of planItem.dataForPerform; let planIndex = index; trackBy: planTraker">
+                    <plan-item *ngIf="planIndex < 1" 
+                    [item]="preparePlan.planRepeats" 
+                    [mode]="mode"
+                    [disableEditable]="true" ></plan-item>
+                    <div [ngStyle]="style" *ngIf="planIndex >= 1"></div>
+                </div>
+            </ng-container>
+        </td>
+        <td>
+            <!-- Repeat section -->
+            <ng-container *ngFor="let planItem of item.plans">
+                <div *ngFor="let preparedItem of planItem.dataForPerform; let planIndex = index; trackBy: planTraker">
+                    <plan-item *ngIf="planIndex < 1" 
+                    [item]="preparedItem.planRepeatSection" 
+                    [mode]="mode"
+                    [disableEditable]="true"></plan-item>
+                    <div [ngStyle]="style" *ngIf="planIndex >= 1"></div>
+                </div>
+            </ng-container>
+        </td>
+    </ng-container>
+    <!-- burden fields -->
+    <ng-container *ngIf="!isTrainingBegin && !isHanding && !isEditable">
+        <!-- KPSH (count lift) -->
+        <td class="top aligned">
+            <plan-item *ngFor="let planItem of item.plans; trackBy: planTraker"
+            item="{{calcService.KPSH(planItem.repeats, planItem.repeatSection)}}"
+            [mode]="'view'">
+            </plan-item>
+        </td>
+        <!-- Tonnage -->
+        <td class="top aligned">
+            <plan-item *ngFor="let planItem of item.plans; trackBy: planTraker"
+            item="{{calcService.tonnage(calcService.KPSH(planItem.repeats, planItem.repeatSection), planItem.weight)}}"
+            [mode]="'view'">
+            </plan-item>
+        </td>
+        <!-- Average weight -->
+        <td class="top aligned">
+            <plan-item *ngFor="let planItem of item.plans; trackBy: planTraker"
+            item="{{
+                calcService.averageWeight(
+                    calcService.KPSH(planItem.repeats, planItem.repeatSection),
+                    calcService.tonnage(calcService.KPSH(planItem.repeats, planItem.repeatSection), planItem.weight)
+                ) || 0
+            }}"
+            [mode]="'view'">
+            </plan-item>
+        </td>
+        <!-- Average intensive -->
+        <td class="top aligned">
+            <plan-item *ngFor="let planItem of item.plans; trackBy: planTraker"
+            item="{{
+                calcService.averageInt(
+                    item.oneRepeatMaximum,
+                    calcService.averageWeight(
+                        calcService.KPSH(planItem.repeats, planItem.repeatSection),
+                        calcService.tonnage(
+                            calcService.KPSH(planItem.repeats, planItem.repeatSection),
+                            planItem.weight
+                        )
+                    )
+                ) || 0
+            }}%"
+            [mode]="'view'">
+            </plan-item>
+        </td>
+        <!-- actions -->
+        <td *ngIf="mode === 'edit'">
+            <div [ngStyle]="style">
+                <i class="link green plus icon" (click)="addPlan()"></i>
+            </div>
+            <ng-container *ngFor="let nothin of item.plans; let i = index; trackBy: planTraker">
+                <div *ngIf="i >= 1" [ngStyle]="style" class="ui middle aligned center aligned">
+                    <i class="link red delete icon" (click)="deletePlan(i)"></i>
+                </div>
+            </ng-container>
+        </td>
+    </ng-container>
+    <!-- fields for make training -->
+    <ng-container *ngIf="isTrainingBegin || isHanding || isEditable">
+        <td class="collapsing">
+            <ng-container *ngFor="let planItem of item.plans; let planIndex = index; trackBy: planTraker">
+                <div *ngFor="let prepareData of planItem.dataForPerform; let i = index; trackBy: makingPlanTracker">
+                    <plan-item
+                    [item]="prepareData.doneWeight"
+                    (itemChange)="setDoneWeight($event, prepareData.id)"
+                    (focusOnItem)="setFocus('doneWeight' + planIndex + i, i)"
+                    (removeFocus)="resetFocus()"
+                    [focus]="focusOnItem && focusOnItem.prop === 'doneWeight' + planIndex + i && focusOnItem.index === i"
+                    [secondaryItem]="prepareData.planWeight" 
+                    [disableEditable]="prepareData.isComplete && !editCompletePlanPart[planIndex][i] && !isEditable"
+                    [mode]="mode"></plan-item>
+                </div>
+            </ng-container>
+        </td>
+        <td class="collapsing">
+            <ng-container *ngFor="let planItem of item.plans; let planIndex = index; trackBy: planTraker">
+                <div *ngFor="let prepareItem of planItem.dataForPerform; let i = index; trackBy: makingPlanTracker">
+                    <plan-item 
+                    [item]="prepareItem.doneRepeats"
+                    (itemChange)="setDoneRepeats($event, prepareItem.id)"
+                    (focusOnItem)="setFocus('doneRepeats' + planIndex + i, i)"
+                    (removeFocus)="resetFocus()"
+                    [focus]="focusOnItem && focusOnItem.prop === 'doneRepeats' + planIndex + i && focusOnItem.index === i"
+                    [secondaryItem]="prepareItem.planRepeats"
+                    [disableEditable]="prepareItem.isComplete && !editCompletePlanPart[planIndex][i] && !isEditable"
+                    [mode]="mode"></plan-item>
+                </div>
+            </ng-container>
+        </td>
+        <td class="collapsing">
+            <ng-container *ngFor="let planItem of item.plans; trackBy: planTraker">
+                <div *ngFor="let prepareItem of planItem.dataForPerform; trackBy: makingPlanTracker">
+                    <plan-item 
+                    [item]="1"
+                    [secondaryItem]="1"
+                    [disableEditable]="true"
+                    [mode]="mode"></plan-item>
+                </div>
+            </ng-container>
+        </td>
+        <td class="collapsing">
+            <ng-container *ngIf="isEditable">
+                <ng-container *ngFor="let planItem of item.plans; let planIndex = index; trackBy: planTraker">
+                    <ng-container *ngFor="let prepareItem of planItem.dataForPerform; let perfIndex = index; trackBy: makingPlanTracker">
+                        <div [ngStyle]="style"
+                        (mouseenter)="setHoverOnPlan(planIndex, perfIndex, true)"
+                        (mouseleave)="setHoverOnPlan(planIndex, perfIndex, false)">
+                            <!-- Icons witch display doning of exercise -->
+                            <ng-container *ngIf="!hoverOnPlanPart[planIndex][perfIndex]">
+                                <i class="{{prepareItem.isFullDone ? 'green' : 'red'}} check icon"></i>
+                            </ng-container>
+                            <!-- Icon for hover -->
+                            <i suiPopup [popupText]="_commonLabels.EXERCISE_EDIT_UPDATE_DATA" popupPlacement="left"
+                            *ngIf="hoverOnPlanPart[planIndex][perfIndex]"
+                            class="link blue undo icon"
+                            (click)="saveEditResult(prepareItem.id)"></i>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngIf="isTrainingBegin || isHanding">
+                <ng-container *ngFor="let planItem of item.plans; let planIndex = index; trackBy: planTraker">
+                    <ng-container *ngFor="let prepareItem of planItem.dataForPerform; let perfPlanIndx = index; trackBy: makingPlanTrackerK">
+                        <!-- иконка маркирует выполненую раскладку -->
+                        <div [ngStyle]="style" *ngIf="prepareItem.isComplete && !editCompletePlanPart[planIndex][perfPlanIndx]"
+                            (mouseover)="setHoverOnPlan(planIndex, perfPlanIndx, true)"
+                            (mouseleave)="setHoverOnPlan(planIndex, perfPlanIndx, false)"
+                            (click)="editPartPlan(planIndex, perfPlanIndx)"
+                            >
+                            <i
+                            class="{{prepareItem.isFullDone ? 'green' : 'red'}} check icon" 
+                            *ngIf="!hoverOnPlanPart[planIndex][perfPlanIndx]"></i>
+                            <i suiPopup [popupText]="_commonLabels.EXERCISE_EDIT_COMPLETED_EXRCISE_BTN" popupPlacement="left"
+                            class="link edit icon" 
+                            *ngIf="hoverOnPlanPart[planIndex][perfPlanIndx]"></i>
+                        </div>
+                        <!-- displaying when user editing completed plan -->
+                        <div
+                            [ngStyle]="style"
+                            *ngIf="prepareItem.isComplete && editCompletePlanPart[planIndex][perfPlanIndx]"
+                            (click)="completePlanPart(prepareItem.id)"
+                            suiPopup [popupText]="_commonLabels.EXERCISE_EDIT_SAVE" popupPlacement="left"
+                            >
+                            <i class="save blue link icon"></i>
+                        </div>
+                        <!-- иконка маркирует раскладку как ожидающую -->
+                        <div [ngStyle]="style" *ngIf="!prepareItem.isComplete" 
+                            (mouseover)="setHoverOnPlan(planIndex, perfPlanIndx, true)"
+                            (mouseleave)="setHoverOnPlan(planIndex, perfPlanIndx, false)"
+                            (click)="completePlanPart(prepareItem.id)"
+                            >
+                            <i
+                            *ngIf="!hoverOnPlanPart[planIndex][perfPlanIndx]" 
+                            class="yellow link clock icon">
+                            </i>
+                            <i suiPopup [popupText]="_commonLabels.EXERCISE_COMPLETE_BTN" popupPlacement="left"
+                            *ngIf="hoverOnPlanPart[planIndex][perfPlanIndx]" 
+                            class="blue link plus icon">
+                            </i>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+        </td>
+    </ng-container>
+</tr>
+<!-- row for characteristic -->
+<tr *ngIf="!isTrainingBegin && !isHanding && !isEditable">
+    <td colspan="6"></td>
+    <!-- Total lift count (KPSH) -->
+    <td>{{calcService.calculateExerciseParams(imItem).KPSH}}</td>
+    <!-- Total tonnage for exercise -->
+    <td>{{calcService.calculateExerciseParams(imItem).tonnage}}</td>
+    <!-- Total average weight for exercise -->
+    <td>{{calcService.calculateExerciseParams(imItem).averageWeight || 0}}</td>
+    <!-- Total average intensive fro exercise -->
+    <td>{{calcService.calculateExerciseParams(imItem).averageInt || 0}}%</td>
+    <td *ngIf="mode === 'edit'"></td>
+</tr>

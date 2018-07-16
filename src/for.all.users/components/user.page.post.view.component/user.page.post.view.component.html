@@ -1,0 +1,162 @@
+<div class="ui hidden fitted divider"></div>
+<div class="ui top attached header middle aligned" [ngStyle]="headerStyle">
+    {{post.header}}
+    <div class="ui right floated mini buttons">
+        <ng-container [ngSwitch]="isEditable">
+            <div *ngSwitchCase="false" class="ui basic icon button" suiPopup popupInverted popupText="{{_popupLabels.EDIT}}" popupPlacement="left"
+                (click)="enableEditMode()">
+                <i class="edit icon"></i>
+            </div>
+            <div *ngSwitchCase="true" class="ui basic icon button" suiPopup popupInverted popupText="{{_popupLabels.SAVE_EDITION}}" popupPlacement="left"
+                (click)="disableEditMode()">
+                <i class="save icon"></i>
+            </div>
+        </ng-container>
+        <ng-container [ngSwitch]="isEditable">
+            <div *ngSwitchCase="false" class="ui icon basic mini button" suiPopup popupText="{{_popupLabels.DROP_POST}}" popupInverted
+                popupPlacement="left" (click)="removePost()">
+                <i class="delete icon"></i>
+            </div>
+            <div *ngSwitchCase="true" class="ui icon basic mini button" suiPopup popupText="{{_popupLabels.CANCEL_EDITION}}" popupInverted
+                popupPlacement="left" (click)="rollBackEditMode()">
+                <i class="delete icon"></i>
+            </div>
+        </ng-container>
+    </div>
+    <div class="ui hidden fitted clearing divider"></div>
+</div>
+<div [ngSwitch]="post.type" #container class="ui attached segment">
+    <sui-dimmer class="inverted" [isDimmed]="dimmed" [isClickable]="false">
+        <div class="ui text loader">
+            {{dimmerMessage}}
+        </div>
+    </sui-dimmer>
+    <div *ngSwitchCase="types?.ARTICLE">
+        <p *ngIf="!isEditable">
+            {{post.content}}
+        </p>
+        <form *ngIf="isEditable" class="ui form">
+            <textarea name="article_text" [(ngModel)]="post.content"></textarea>
+        </form>
+    </div>
+    <div *ngSwitchCase="types?.VIDEO">
+        <form *ngIf="isEditable" class="ui form">
+            <div class="ui tiny header" [style.margin-bottom.px]="5">{{_commonLabels.VIDEO_EDIT_HEADER}}</div>
+            <div class="ui inline fields">
+                <div class="sixteen wide field">
+                    <div class="ui fluid input">
+                        <input type="text" name="new_video_header" [(ngModel)]="post.header" />
+                    </div>
+                </div>
+            </div>
+            <div class="ui tiny header" [style.margin-bottom.px]="5">{{_commonLabels.VIDEO_EDIT_ID}}</div>
+            <div class="ui inline fields">
+                <div class="one wide field">
+                    <div class="ui fluid basic icon button" (click)="changeVideoId()">
+                        <i class="checkmark icon"></i>
+                    </div>
+                </div>
+                <div class="fifteen wide field">
+                    <div class="ui fluid input">
+                        <input type="text" name="new_video_id" [(ngModel)]="post.url" />
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div #videoContainer>
+            <!-- render video element + youtube api -->
+        </div>
+    </div>
+    <div *ngSwitchCase="types?.LIST">
+        <div *ngIf="isEditable">
+            <form class="ui form" (mouseover)="dropHoverFromListItem(null)">
+                <div class="ui inline fields">
+                    <div class="one wide field">
+                        <div class="ui icon basic fluid button" (click)="addNewListItem()">
+                            <i class="plus icon"></i>
+                        </div>
+                    </div>
+                    <div class="fifteen wide field" [style.padding-right.rem]="0">
+                        <div class="ui fluid input">
+                            <input type="text" name="new_list_item" [(ngModel)]="newListItemContent" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="ui list mod-list">
+            <div [style.line-height.px]="20" class="item" *ngFor="let item of post.content; let itemIndex = index; trackBy: listItemTracker"
+                (mouseover)="setHoverOnListItem(itemIndex)" (mouseleave)="dropHoverFromListItem(itemIndex)">
+                <!-- none hover -->
+                <div *ngIf="!isEditable || listItemHover !== itemIndex" class="item mod-item">
+                    <div class="ui horiontal basic label" [style.margin-right.px]="10">{{itemIndex + 1}}</div> {{item?.value}}
+                </div>
+
+                <!-- under hover -->
+                <div *ngIf="isEditable && listItemHover === itemIndex" class="ui action fluid input">
+                    <input type="text" name="list_item_name" [(ngModel)]="item.value" (focus)="holdHoverOnItem()" />
+                    <div class="ui secondary icon button" (click)="removeListItem(item)" suiPopup popupText="{{_popupLabels.DROP_LIST_ELEMENT}}"
+                        popupPlacement="left" popupInverted>
+                        <i class="delete icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngSwitchCase="types?.VOTING_LIST">
+        <form *ngIf="isEditable" class="ui form" (mouseover)="dropHoverFromListItem(null)">
+            <div class="ui inline fields">
+                <div class="one wide field">
+                    <div class="ui basic icon fluid button" (click)="addNewListItem()">
+                        <i class="plus icon"></i>
+                    </div>
+                </div>
+                <div class="fifteen wide field">
+                    <input type="text" name="new_voting_item_value" [(ngModel)]="newListItemContent" />
+                </div>
+            </div>
+        </form>
+        <div class="ui selection list">
+            <div *ngFor="let item of post.content; let itemIndex = index; trackBy: listItemTracker" class="item" (mouseover)="setHoverOnListItem(itemIndex)"
+                (mouseleave)="dropHoverFromListItem(itemIndex)">
+                <div *ngIf="!isEditable" class="ui left floated">
+                    <sui-checkbox [ngModel]="item.vote" (ngModelChange)="takeVote(item)">{{item.value}}</sui-checkbox>
+                </div>
+                <div *ngIf="isEditable && listItemHover !== itemIndex">
+                    {{item.value}}
+                </div>
+                <div *ngIf="isEditable && listItemHover === itemIndex" class="ui fluid action input">
+                    <input type="text" [(ngModel)]="item.value" name="new_voted_item_value" (focus)="holdHoverOnItem()" />
+                    <div class="ui secondary icon button" (click)="removeListItem(item)">
+                        <i class="delete icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="ui bottom attached header" [style.padding.rem]="0.25">
+    <div class="ui left floated mini very compact buttons">
+        <div class="ui labeled basic icon button">
+            <i class="{{_commonIcons.VIEW_ICON}} icon"></i>
+            <span *ngIf="userId !== selfId">{{post?.views}}</span>
+            <span *ngIf="userId === selfId" suiPopup popupText="уникальные/не уникальные" popupInverted popupPlacement="bottom">
+                {{post?.uniqueViews}}/{{post?.views}}
+            </span>
+        </div>
+        <div class="ui basic icon button"></div>
+    </div>
+    <div class="ui right floated mini very compact buttons">
+        <div class="ui labeled basic icon button" [class.loading]="likeBtnThinking" [class.active]="post.isUserLiked" [style.border-radius.px]="3"
+            (click)="setLike()">
+            <i class="{{_commonIcons.LIKES_ICON}} icon"></i> {{post?.likes}}
+        </div>
+        <div class="ui basic button" [style.padding-left.px]="0" [style.padding-right.px]="5"></div>
+        <div class="ui labeled basic icon button" [class.loading]="dislikeBtnThinking" [class.active]="post.isUserDisliked" [style.border-radius.px]="3"
+            (click)="setDislike()">
+            <i class="{{_commonIcons.DISLIKES_ICON}} icon"></i> {{post?.dislikes}}
+        </div>
+    </div>
+
+    <div class="ui hidden fitted clearing divider"></div>
+</div>

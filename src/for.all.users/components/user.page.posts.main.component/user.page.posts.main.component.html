@@ -1,0 +1,29 @@
+<ng-container *ngIf="userId === selfId">
+    <div class="ui hidden divider"></div>
+    <app-user-page-create-post></app-user-page-create-post>
+</ng-container>
+<div *ngIf="hasError" class="ui error message">
+    {{_errorMessage}}
+</div>
+
+<ng-container *ngIf="posts && posts.length">
+    <ng-container *ngFor="let postItem of posts; let postIndex = index; trackBy: mainTracker" >
+        <app-user-page-post-view 
+        *ngIf="postIndex >= minItemIndex && postIndex < maxItemIndex"
+        [post]="postItem" 
+        [userId]="userId" 
+        [selfId]="selfId"
+        [listItemHover]="listItemHover"
+        (setPocessingTiming)="processingTimingHandler()"
+        [timingFreaze]="timingFreaze"
+        >
+        </app-user-page-post-view>
+    </ng-container>
+    <div class="ui basic segment" *ngIf="dimmed" [style.min-height.px]="200">
+        <sui-dimmer class="inverted" [isDimmed]="dimmed" [isClickable]="false">
+            <div class="ui large text loader">
+                {{dimmerMessage}}
+            </div>
+        </sui-dimmer>
+    </div>    
+</ng-container>

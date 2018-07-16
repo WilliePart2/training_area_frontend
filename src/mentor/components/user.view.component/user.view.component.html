@@ -1,0 +1,153 @@
+<!-- template -->
+<ng-template let-context let-modal="modal" #trainingPlansList>
+    <div class="header">
+        {{context.header}}
+    </div>
+    <div class="scrolling content">
+        <div class="mark-container">
+            <app-listing-training-plan-view
+                    [trainingPlans]="context.listing"
+                    [columns]="columnsForList"
+                    [cursorPointer]="true"
+                    (action)="goToTrainingPlan($event, modal.deny)"
+            >
+            </app-listing-training-plan-view>
+        </div>
+    </div>
+</ng-template>
+<!-- body -->
+<div class="ui segment">
+<div *ngIf="user" class="ui image header user" [@showDetail]="true">
+    <sui-dimmer class="inverted" [isDimmed]="dimmed" [isClickable]="false">
+        <div class="ui loader"></div>
+    </sui-dimmer>
+    <div class="image" (click)="showDetail = !showDetail" [style.cursor]="'pointer'">
+        <img [src]="user.avatar" />
+    </div>
+    <div class="content">
+        <div class="description user-main">
+            <div class="user-main--username" (click)="goToUserPage()">
+                {{user.username}}
+            </div>
+            <div class="user-main--rating">
+                <sui-rating [(ngModel)]="user.rating" [maximum]="10" [isReadonly]="true"></sui-rating>
+            </div>
+        </div>
+        <div class="sub header mod-sub-header user-info">
+            <div [ngSwitch]="user.type" class="user-info--type">
+                <ng-template [ngSwitchCase]="'user'">
+                    <span>{{_commonLabels.USER_STATE_SIMPLE_USER}}</span>
+                </ng-template>
+                <ng-template [ngSwitchCase]="'mentor'">
+                    <span>{{_commonLabels.USER_STATE_MENTOR}}</span>
+                </ng-template>
+            </div>
+            <div class="user-info--state">
+                <!-- count completed training plans -->
+                <div *ngIf="user.trainings.completedPlans && user.trainings.completedPlans.length" class="user-info--state_item" [style.cursor]="'pointer'">
+                    <div *ngIf="getStrongImage()" class="user-info--state_item-image" (click)="viewTrainingPlans('completed')">
+                        <img [src]="getStrongImage()" />
+                    </div>
+                    <div class="user-info--state_item-value" [innerText]="user.trainings.completedPlans.length || 0"></div>
+                    <div class="user-info--state_item-description">
+                        {{_commonLabels.COUNT_COMPLETED_TRAINING_PLANS}}
+                    </div>
+                </div>
+                <!-- current training plan -->
+                <div *ngIf="user.trainings.currentPlan && permission" class="user-info--state_item" (click)="goToTrainingPlan(user.trainings.currentPlan.id)">
+                    <div *ngIf="getCurrentTrainingPlanIcon()" class="user-info--state_item-image" [style.cursor]="'pointer'">
+                        <img [src]="getCurrentTrainingPlanIcon()" />
+                    </div>
+                    <div class="user-info--state_item-description">
+                        <div class="description-header">
+                            {{_commonLabels.CURRENT_TRAINING_PLAN}}
+                        </div>
+                        <div class="description-content">
+                            {{user.trainings.currentPlan.name}}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- count own training plans -->
+                <div *ngIf="user.trainings.ownPlans && user.trainings.ownPlans.length" class="user-info--state_item">
+                    <div *ngIf="getOwnTrainingPlansIcon()" class="user-info--state_item-image" (click)="viewTrainingPlans('own')" [style.cursor]="'pointer'">
+                        <img [src]="getOwnTrainingPlansIcon()" />
+                    </div>
+                    <div class="user-info--state_item-value">
+                        {{user.trainings.ownPlans.length || 0}}
+                    </div>
+                    <div class="user-info--state_item-description">
+                        {{_commonLabels.COUNT_OWN_TRAINING_PLANS}}
+                    </div>
+                </div>
+                <!-- count padawans (only for mentor)-->
+                <div *ngIf="user.countPadawans && user.type === 'mentor'" class="user-info--state_item">
+                    <div class="user-info--state_item-image">
+                        <img [src]="getOwnPadawansIcon()" />
+                    </div>
+                    <div class="user-info--state_item-value">
+                        {{user.countPadawans}}
+                    </div>
+                    <div class="user-info--state_item-description">
+                        {{_commonLabels.COUNT_OWN_PADAWANS}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="ui fitted divider"></div>
+            <div class="sub header mod-sub-header user-info">
+                <div></div>
+                <div class="user-info--state">
+                    <!-- send message block -->
+                    <div class="user-info--state_item">
+                        <div *ngIf="getSendMessageIcon()" class="user-info--state_item-image" [style.cursor]="'pointer'" (click)="sendMessageToUser(user.id)">
+                            <img [src]="getSendMessageIcon()" />
+                        </div>
+                        <div class="user-info--state_item-description">
+                            {{_commonLabels.USER_ACTION_SEND_MESSAGE}}
+                        </div>
+                    </div>
+                    <!-- invite user -->
+                    <div *ngIf="currentUserType !== user.type && mode === _modeTypes.view" class="user-info--state_item">
+                        <div *ngIf="getAddUserIcon()" class="user-info--state_item-image" [style.cursor]="'pointer'" (click)="sendInviteRequest(user.id)">
+                            <img [src]="getAddUserIcon()" />
+                        </div>
+                        <div [ngSwitch]="user.type" class="user-info--state_item-description">
+                            <ng-template [ngSwitchCase]="'mentor'">
+                                {{_commonLabels.USER_ACTION_INVITE_USER_AS_MENTOR}}
+                            </ng-template>
+                            <ng-template [ngSwitchCase]="'user'">
+                                {{_commonLabels.USER_ACTION_INVITE_USER_AS_LEARNER}}
+                            </ng-template>
+                        </div>
+                    </div>
+                    <ng-container *ngIf="mode !== _modeTypes.view">
+                        <div *ngIf="getDividerIcon()" class="user-info--state_item">
+                            <div class="user-info--state_item-image">
+                                <img [src]="getDividerIcon()" />
+                            </div>
+                        </div>
+                        <div *ngIf="mode === _modeTypes.request" class="user-info--state_item" (click)="acceptEvent()" [style.cursor]="'pointer'">
+                            <div *ngIf="getAcceptIcon()" class="user-info--state_item-image">
+                                <img [src]="getAcceptIcon()">
+                            </div>
+                            <div class="user-info--state_item-description">
+                                {{getAcceptDescription()}}
+                            </div>
+                        </div>
+                        <div class="user-info--state_item">
+                            <div *ngIf="getRejectIcon()" class="user-info--state_item-image" (click)="rejectEvent()" [style.cursor]="'pointer'">
+                                <img [src]="getRejectIcon()" />
+                            </div>
+                            <div class="user-info--state_item-description">
+                                {{getRejectDescription()}}
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

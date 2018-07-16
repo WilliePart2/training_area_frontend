@@ -1,0 +1,27 @@
+<div *ngIf="contacts" class="ui fluid segment">
+    <ng-container *ngIf="groupedContacts">
+        <div class="ui stackable centered grid">
+            <ng-container *ngFor="let items of groupedContacts">
+                <div class="eight wide computer sixteen wide tablet column">
+                    <div class="ui selection list" *ngFor="let item of items; let f = first">
+                        <div *ngIf="f" class="ui dividing header inline-item">
+                            {{item}}
+                        </div>
+                        <div *ngIf="!f" class="item inline-container">
+                            <div class="ui small image header inline-item" [ngStyle]="{width: 'auto'}">
+                                <div class="small image">
+                                    <img class="ui small image" [src]="item.icon" alt="" title="" />
+                                </div>
+                                <div class="content inline-item">
+                                    {{item.value}}
+                                    <div class="description">{{item.label}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
+    <!-- add render ungrouped items -->
+</div>

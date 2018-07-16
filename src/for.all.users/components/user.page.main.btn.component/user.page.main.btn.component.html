@@ -1,0 +1,7 @@
+<div>
+    <div class="ui fluid basic button">Отправить сообщение</div>
+    <div class="ui hidden fitted divider"></div>
+    <div class="ui hidden fitted divider"></div>
+    <div *ngIf="type === 'mentor' && selfType === 'user'" class="ui fluid basic button">Стать учеником</div>
+    <div *ngIf="type === 'user' && selfType === 'mentor'" class="ui fluid basic button">Пригласить в ученики</div>
+</div>

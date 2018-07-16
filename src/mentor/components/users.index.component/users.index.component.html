@@ -1,0 +1,4 @@
+<div [ngSwitch]="type">
+    <app-padawan-my-user *ngSwitchCase="'mentor'"></app-padawan-my-user>
+    <app-user-mentors-index *ngSwitchCase="'user'"></app-user-mentors-index>
+</div>

@@ -1,0 +1,6 @@
+.ui.form .inline.fields.without-margin-fields {
+    margin: 0;
+}
+.ui.form .inline.fields .field.without-padding {
+    padding: 0;
+}

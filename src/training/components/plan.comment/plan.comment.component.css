@@ -1,0 +1,50 @@
+.mod-main-container {
+    font-size: 1.3rem;
+}
+.mod-main-container .mod-date-label {
+    font-size: 1rem;
+}
+
+.comment {
+    width: 100%;
+}
+
+.ui.attached.segment.bottom-buttons {
+    display: flex;
+    flex-flow: nowrap row;
+    justify-content: flex-start;
+    padding: 5px;
+    align-items: center;
+}
+.ui.attached.segment.bottom-buttons .bottom-buttons--actions {
+    margin-left: auto;
+    display: flex;
+    flex-flow: nowrap row;
+}
+.ui.attached.segment.bottom-buttons .bottom-buttons--actions div {
+    padding: 1px;
+}
+
+.vote-item {
+    position: relative;
+    margin-right: 3.6rem;
+}
+.vote-item--label {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 3rem;
+    background-color: rgba(0, 0, 0, 0.04);
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.vote-item--label:after {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    margin-top: -5px;
+    border-color: transparent rgba(0, 0, 0, 0.1) transparent transparent;
+    border-width: 5px;
+    border-style: solid;
+}

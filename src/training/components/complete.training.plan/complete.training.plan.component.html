@@ -1,0 +1,21 @@
+<div>
+    <sui-dimmer class="page" [isDimmed]="dimmed" [isClickable]="false">
+        <div class="ui large text loader">
+            {{dimmerMessage}}
+        </div>
+    </sui-dimmer>
+    <div class="ui error message" *ngIf="hasError || hasGlobalError">
+        {{_errorMessage || _globalErrorMessage}}
+    </div>
+    <div class="ui info message" *ngIf="hasEmptyData">
+        {{_emptyDataMessage}}
+    </div>
+    <training-plan-view
+            [planId]="id"
+            [modeFromOutside]="mode"
+            [trainingSessionId]="trainingSessionId"
+            [completedMicrocicles]="completedMicrocicles"
+            [completedTrainings]="completedTrainings"
+            [completedExercisePlans]="completedExercisePlans"
+    ></training-plan-view>
+</div>

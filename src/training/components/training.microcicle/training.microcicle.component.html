@@ -1,0 +1,166 @@
+<!-- Отображение общей информации микроцыкла -->
+<sui-accordion-panel (click)="toggleVisible($event)" [isOpen]="visible" [isDisabled]="true">
+    <!-- Заголовок акордеона -->
+    <div data-id="title" title>
+        <div data-id="title">
+            <i class="ui dropdown icon"></i>
+            Микроцикл: {{microcicle.microcicleName}}
+            <i *ngIf="isMicrocicleComplete" class="green checkmark icon"></i>
+        </div>
+    </div>
+    <!-- Контент акордеона -->
+    <div content>
+        <div [style.padding.px]="0" class="ui basic segment">
+        <!-- error message -->
+        <div *ngIf="hasError" class="ui error message">
+            {{_errorMessage}}
+        </div>
+        <!-- dimmer -->
+        <sui-dimmer class="inverted" [isDimmed]="dimmed" [isClickable]="false">
+            <div class="ui large text loader">
+                {{dimmerMessage}}
+            </div>
+        </sui-dimmer>
+        <div class="ui left floated small header">
+            <div class="content">{{microcicle.microcicleName}}</div>
+        </div>
+        <!-- Кнопки работы с микроциклом -->
+        <ng-container *ngIf="mode === 'edit' || mode === 'view'">
+            <div class="ui right floated left pointing dropdown icon button" suiDropdown autoClose="itemClick">
+                <i class="sidebar icon"></i>
+                <div class="menu" suiDropdownMenu>
+                        <div *ngIf="mode === 'edit'" class="link item" (click)="open()">
+                            {{_commonLabels.M_BTN_ADD_ADD_TRAINING}}
+                        </div>
+                        <!--<div class="link item" (click)="deleteMicrocicleHandler()">Удалить тренировку</div>-->
+                        <div *ngIf="mode === 'edit'" class="link item" (click)="deleteMicrocicleHandler()">
+                            {{_commonLabels.M_BTN_DELETE_MICROCICLE}}
+                        </div>
+                        <div *ngIf="mode === 'view'" class="link item" (click)="toggleMode()">
+                            {{_commonLabels.M_BTN_EDIT_MICROCICLE}}
+                        </div>
+                        <div *ngIf="mode === 'edit'" class="link item" (click)="initSaveChanges()">
+                            {{_commonLabels.M_BTN_SAVE_CHANGES}}
+                        </div>
+                        <div *ngIf="mode ==='edit'" class="link item" (click)="cancelEditing()">
+                            {{_commonLabels.M_BTN_CANCEL_EDITING}}
+                        </div>
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- Отображение общей статистики микроцикла -->
+        <table class="ui very compact unstackable single line fluid celled table compact-table">
+            <thead class="compact-table--item">
+                <tr>
+                    <th></th>
+                    <th>{{_commonLabels.KPSH}}</th>
+                    <th>{{_commonLabels.TONNAGE}}</th>
+                    <th>{{_commonLabels.AVERAGE_WEIGHT}}</th>
+                    <th>{{_commonLabels.RELATIVE_ENTENSIVITY}}</th>
+                </tr>
+            </thead>
+            <tbody class="compact-table--item">
+                <tr>
+                    <td>{{_commonLabels.MICROCILE_CHARACTERISTIC}}</td>
+                    <td>{{calcService.calculateTotalParams(newMicrocicle.get('trainingData')).KPSH}}</td>
+                    <td>{{calcService.calculateTotalParams(newMicrocicle.get('trainingData')).tonnage}}</td>
+                    <td>{{calcService.calculateTotalParams(newMicrocicle.get('trainingData')).averageWeight || 0}}</td>
+                    <td>{{calcService.calculateTotalParams(newMicrocicle.get('trainingData')).averageInt || 0}}%</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Модальное окно для создания тренировки -->
+        <ng-template let-context let-modal="modal" #templateModal>
+            <div class="header">
+                <div class="sub header">{{_commonLabels.ADD_TRAINING_CHOOSE_EXERCISE_FOR_TRAINING}}</div>
+            </div>
+            <div class="content">
+                <form class="ui form" [ngClass]="{error: t_Name.invalid}">
+                    <div class="ui fields">
+                        <div class="sixteen wide field">
+                            <div class="ui fluid input">
+                                <input 
+                                    name="tName"
+                                    type="text"
+                                    [placeholder]="_commonLabels.ADD_TRAINING_TRAINING_NAME_FIELD_PLACEHOLDER"
+                                    [(ngModel)]="trainingName"
+                                    #t_Name="ngModel"
+                                    required
+                                />
+                            </div>
+                            <div *ngIf="t_Name.touched && t_Name.invalid" class="ui error message">
+                                {{_errorLabels.TR_TRAINING_NAME_MUST_BE_SPECIFIED}}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="ui hidden divider"></div>
+                <div class="responsive-table">
+                <table class="ui selectable very compact single line inverted celled unstackable table">
+                    <thead>
+                        <tr>
+                            <th class="collapsing"></th>
+                            <th>{{_commonLabels.ADD_TRAINING_NAME_FIELD}}</th>
+                            <th class="collapsing">{{_commonLabels.ADD_TRAINING_PM_FIELD}}</th>
+                            <th class="collapsing">{{_commonLabels.ADD_TRAINING_TARGET_MUSCLE_GROUP}}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="compact-table--item">
+                        <tr *ngFor="let item of context.list">
+                            <td class="collapsing">
+                                <sui-checkbox [ngModel]="item.checked" (ngModelChange)="checkExercise(item.id)"></sui-checkbox>
+                            </td>
+                            <td>{{item.exercise.name}}</td>
+                            <td class="collapsing">{{item.oneRepeatMaximum}}</td>
+                            <td class="collapsing">{{item.exercise.group}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+            <div class="actions">
+                <button [disabled]="t_Name.invalid || !checkedExercises.length" class="ui green basic button" (click)="modal.approve()">
+                    {{_commonLabels.ADD_TRAINING_CHOOSE_BTN}}
+                </button>
+                <button class="ui red basic button" (click)="modal.deny()">{{_commonLabels.ADD_TRAINING_CANCEL_BTN}}</button>
+            </div>
+        </ng-template>
+
+        <!-- модальное окно для удаления микроцыкла -->
+        <ng-template let-context let-modal="modal" #deleteMicrocicleModal>
+            <div class="content">
+                {{context.message}}
+            </div>
+            <div class="actions">
+                <div class="ui right floated red button" (click)="modal.approve()">
+                    {{_commonLabels.DELETE_MICROCICLE_ACCEPT_BTN}}
+                </div>
+                <div class="ui right floated button" (click)="modal.deny()">
+                    {{_commonLabels.DELTE_MICROCICLE_CANCEL_BTN}}
+                </div>
+                <div class="ui hidden clearing fitted divider divider"></div>
+            </div>
+        </ng-template>
+
+        <!-- Отображение тренировок в микроцикле -->
+        <div>
+            <!-- Компонент тренировки (используем иммутабельные данные) -->
+            <training-item
+                    *ngFor="let trainingItem of trainingData; trackBy: trainingTracker"
+                    [planId]="planId"
+                    [mode]="mode"
+                    [visible]="visible"
+                    [training]="trainingItem"
+                    [completedTrainings]="completedTrainings"
+                    [completedUserPlans]="usersPlans"
+                    [trainingSessionId]="trainingSessionId"
+                    (completeTraining)="completeTrainingHandler($event, trainingItem.id)"
+                    (editCompletedTraining)="handlerOfEditiningCompletedTraining($event)"
+                    [exerciseList]="exerciseList"
+            ></training-item>
+        </div>
+        </div>
+    </div>
+</sui-accordion-panel>

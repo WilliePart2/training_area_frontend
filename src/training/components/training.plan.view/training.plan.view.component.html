@@ -1,0 +1,322 @@
+<div>
+    <!-- displaying error -->
+    <div *ngIf="hasError" class="ui error message">
+        {{_errorMessage}}
+    </div>
+
+    <!-- Here disposed dimer -->
+    <sui-dimmer class="page" [isDimmed]="dimmed" [isClickable]="false">
+        <div class="ui large text loader">{{dimmerMessage}}</div>
+    </sui-dimmer>
+    <!-- modal error -->
+    <sui-dimmer class="page" [isDimmed]="hasGlobalModalError" [isClickable]="false" (click)="disableGlobalModalError()">
+        <div class="ui error message" [style.margin.px]="20">
+            {{globalModalErrorMessage}}
+        </div>
+    </sui-dimmer>
+
+    <!-- Шапка тренировочного плана -->
+    <div class="ui left floated header">
+        <div class="content">
+            <div class="ui left floated">{{name}}</div>
+            <div class="ui right floated">
+                <!-- In this place will be rating -->
+            </div>
+        </div>
+        <div class="sub header">
+            {{category}}
+        </div>
+    </div>
+    <!-- dropdown menu for managing trainig plan -->
+    <ng-container *ngIf="mode !== 'complete' && mode !== 'process'">
+        <div class="ui right floated left pointing dropdown icon basic secondary button" suiDropdown>
+            <i class="sidebar icon"></i>
+            <div class="menu" suiDropdownMenu>
+                <div *ngIf="mode !== 'own' && mode !== 'complete'" class="link item" (click)="beginTraining(id)">
+                    {{_commonLabels.TP_MAIN_DROPDOWN_BEGIN_TRAINING}}
+                </div>
+                <div *ngIf="mode !== 'own' && mode !== 'complete'" class="link item" (click)="appointToLearner(id)">
+                    {{_commonLabels.TP_MAIN_DROPDOWN_ASSIGN_TO_LEARNER}}
+                </div>
+                <div *ngIf="mode === 'own'" class="link item" (click)="setAsCompleted(id)">
+                    {{_commonLabels.TP_MAIN_DROPDOWN_MARK_AS_COMPLETE}}
+                </div>
+            </div>
+        </div>
+    </ng-container>
+    <div class="ui hidden clearing divider"></div>
+
+    <!-- Modal window for appointing training plan to learner -->
+    <ng-template let-modal="modal" let-context #appointModal>
+        <sui-dimmer class="inverted" [isDimmed]="appointModalDimmer">
+            <div class="ui large text loader">{{appointDimmerMessage}}</div>
+        </sui-dimmer>
+
+        <div class="header" *ngIf="context.learners">
+            {{_commonLabels.TP_MODAL_LEARNERS_LEARNERS}}
+        </div>
+        <div class="content" *ngIf="context.learners">
+            <!-- error message -->
+            <div *ngIf="hasAppointModalError" class="ui error message">
+                {{appointModalErrorMessage}}
+            </div>
+            <!-- empty data message -->
+            <div class="ui info message" *ngIf="!context.learners">
+                {{_commonLabels.TP_MODAL_LEARNERS_YOU_DONT_HAVE_LEARNERS_AT_ALL}}
+            </div>
+            <div class="">
+                <div *ngFor="let learner of context.learners" class="ui image header user-header">
+                    <!-- template for current training plan -->
+                    <ng-template let-popup #currentPlanTemplate>
+                        <div (mouseover)="popup.open()">
+                            <div class="ui header">
+                                <div class="content">{{learner?.trainings?.currentPlan?.name}}</div>
+                                <div class="sub header">{{learner?.trainings?.currentPlan?.category}}</div>
+                            </div>
+                            <div *ngIf="learner?.trainings?.currentPlan?.readme">
+                                {{learner.trainings.currentPlan.readme}}
+                            </div>
+                        </div>
+                    </ng-template>
+
+                    <!-- разметка базового каркаса -->
+                    <div class="ui image user-header--image">
+                        <img class="ui tiny image" [src]="learner.avatar" />
+                    </div>
+                    <div class="content user-header--content">
+                        <div class="user-header--content_username">{{learner.username}}</div>
+                        <div class="sub header user-description">
+                            <div *ngIf="learner.trainings.currentPlan" class="user-description--label">
+                                {{_commonLabels.TP_MODAL_LEARNERS_CORRENT_TP}}
+                                <a 
+                                    (click)="viewUserTrainingPlanAsMentor(
+                                        learner.trainings.currentPlan.id,
+                                        learner.id,
+                                        modal.deny
+                                        )"
+                                    suiPopup popupInverted [popupTemplate]="currentPlanTemplate"
+                                >
+                                    {{learner?.trainings?.currentPlan?.name}}
+                                </a>
+                            </div>
+                            <div *ngIf="!learner.trainings.currentPlan" class="user-description--label">
+                                {{_commonLabels.TP_MODAL_LEARNERS_TP_DONT_EXISTS}}
+                            </div>
+                            <div class="ui miny very compact basic icon button user-description--btn" (click)="sendRequestToAppoint(learner.id, modal.deny)">
+                                <i class="checkmark icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="ui basic button" (click)="modal.deny()">{{_commonLabels.TP_MODAL_LEARNERS_CLOSE}}</div>
+        </div>
+    </ng-template>
+
+    <!-- Training plan description (if exists) -->
+    <ng-container *ngIf="!!readme">
+        <div class="ui top attached segment">
+            {{_commonLabels.TP_DESCRIPTION}}
+        </div>
+        <div class="ui attached segment">
+            {{readme}}
+        </div>
+    </ng-container>
+
+    <!-- Отображение общей информации о тренировочном плане -->
+    <div class="ui header">
+        <div class="content">{{_commonLabels.TP_INFO}}</div>
+    </div>
+    <div class="ui centered stackable equal width grid" [ngStyle]="{'min-height' : '200px'}">
+        <div class="row">
+            <!-- Отображение списка упражнений входящих в шаблон -->
+            <div class="middle aligned {{ items.length ? 'four' : 'sixteen'}} wide column">
+                <div class="ui basic segment mod-list-container">
+                    <div class="ui link dividing selection list mod-list">
+                        <div *ngFor="let item of exerciseList; let i = index;" class="item">
+                            <div class="mod-list--label">
+                                {{item.exercise.name}}
+                            </div>
+                            <div class="ui right floated mod-list--checkbox">
+                                <sui-checkbox
+                                              [(ngModel)]="checkedLayoutExercises[i]"
+                                              (click)="toggleLayoutExerciseVisible($event)"
+                                ></sui-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="userId === mentorId && mode !== 'own' && mode !== 'complete' && mode !== 'process'" 
+                        class="ui fluid basic button" (click)="editExerciseLayout()">
+                        {{_commonLabels.TP_EXERCISE_LAYOUT_EDIT}}
+                    </div>
+                </div>
+            </div>
+            <!-- График отображающий нагрузку по упражнениям в микроцикле -->
+            <div *ngIf="items.length" class="middle aligned twelve wide column">
+                <layout-exercise-chart [trainings]="visibleExerciseList" [microcicles]="items"></layout-exercise-chart>
+            </div>
+        </div>
+        <div class="row">
+            <div class="middle aligned sixteen wide column">
+                <!-- График отображающий нагрузку в микроцикле -->
+                <div class="ui basic segment">
+                    <div *ngIf="!items.length" class="ui middle aligned info message">{{_commonLabels.TP_EMPTY_MESSAGE_LABEL}}</div>
+                    <training-plan-chart *ngIf="items.length" [microcicles]="items"></training-plan-chart>
+                </div>
+            </div>
+        </div>
+        <!-- Модальное окно для добавления упражнений в шаблон -->
+        <ng-template let-context let-modal="modal" #addExerciseToLayout>
+            <!--  modal dimmer -->
+            <sui-dimmer class="inverted" [isDimmed]="layoutModalDimmer" [isClickable]="false">
+                <div class="ui large text loader">
+                    {{layoutModalDimmerMessage}}
+                </div>
+            </sui-dimmer>
+            <!-- modal content -->
+            <div class="header">
+                {{_commonLabels.TP_ADD_EXERCISE_MODAL_EXERCISE_LIST}}
+            </div>
+            <div class="content">
+                <!-- error message -->
+                <div *ngIf="hasLayoutModalError" class="ui error message">
+                    {{layoutModalErrorMessage}}
+                </div>
+                <!-- Форма добавления упражнений -->
+                <form class="ui form">
+                    <div class="ui fields">
+                        <div class="seven wide field">
+                            <sui-select class="fluid selection"
+                                        [options]="listingExerciseForRender"
+                                        labelField="name"
+                                        valueField="id"
+                                        [isSearchable]="true"
+                                        #chooseExercise
+                                        (selectedOptionChange)="checkExercise($event)"
+                            >
+                                <div class="ui basic segment">
+                                    <div class="ui fluid left icon input">
+                                        <i class="ui search icon"></i>
+                                        <input suiSelectSearch type="text" [placeholder]="_commonLabels.TP_ADD_EXERCISE_MODAL_EXERCISE_SEARCH_PLACEHOLDER" />
+                                    </div>
+                                    <div class="ui divider"></div>
+                                </div>
+                                <sui-select-option *ngFor="let element of chooseExercise.filteredOptions"
+                                                   [value]="element"
+                                ></sui-select-option>
+                            </sui-select>
+                        </div>
+                        <div class="seven wide field">
+                            <sui-select class="fluid selection" [options]="context.groups"
+                                        labelField="group"
+                                        valueField="groupId"
+                                        [isSearchable]="true"
+                                        #chooseGroup
+                                        (selectedOptionChange)="checkGroupExercise($event)"
+                            >
+                                <div class="ui basic segment">
+                                    <div class="ui fluid left icon input">
+                                        <i class="ui search icon"></i>
+                                        <input suiSelectSearch type="text" [placeholder]="_commonLabels.TP_ADD_EXERCISE_MODAL_EXERCISE_GROUP_SEARCH_PLACEHOLDER" />
+                                    </div>
+                                    <div class="ui divider"></div>
+                                </div>
+                                <sui-select-option *ngFor="let element of chooseGroup.filteredOptions" [value]="element"></sui-select-option>
+                            </sui-select>
+                        </div>
+                        <div class="two wide field">
+                            <button [disabled]="!selectedExercise" class="ui basic fluid button" (click)="addExercise()">
+                                {{_commonLabels.TP_ADD_EXERCISE_MODAL_ADD_BTN}}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <!-- Таблица отображения выраных упражнений -->
+                <div class="table-container">
+                    <table class="ui very compact single line selectable inverted unstackable table mod-table">
+                        <thead>
+                        <tr>
+                            <th>{{_commonLabels.TP_ADD_EXERCISE_TABLE_TARGET_GROUP_LABEL}}</th>
+                            <th>{{_commonLabels.TP_ADD_EXERCISE_TABLE_NAME_LABEL}}</th>
+                            <th class="collapsing">{{_commonLabels.TP_ADD_EXERCISE_TABLE_1PM_LABEL}}</th>
+                            <th class="collapsing">{{_commonLabels.TP_ADD_EXERCISE_TABLE_ACTIONS_LABEL}}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let item of checkedExercises">
+                            <td>{{item.group}}</td>
+                            <td>{{item.name}}</td>
+                            <td class="collapsing">
+                                <div class="ui fluid transparent input">
+                                    <input type="text" name="rptMx" [(ngModel)]="item.oneRepeatMaximum" />
+                                </div>
+                            </td>
+                            <td class="collapsing center aligned" (click)="deleteExercise(item.id)">
+                                <div class="ui inverted very compact mini basic icon button">
+                                    <i class="ui delete icon"></i>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="actions">
+                <div class="ui basic green button" (click)="addindExerciseToLayout(modal.deny)">
+                    {{_commonLabels.TP_ADD_EXERCISE_TABLE_SAVE_CHANGES_BTN}}
+                </div>
+                <div class="ui basic red button" (click)="modal.deny()">
+                    {{_commonLabels.TP_ADD_EXERCISE_TABLE_CANCEL_BTN}}
+                </div>
+            </div>
+        </ng-template>
+    </div>
+
+    <!-- Добавление микроцикла в тренировочный план -->
+    <div *ngIf="isOwner && (mode === 'view' || mode === 'edit')">
+        <div class="ui dividing header">{{_commonLabels.TP_ADD_MICROCICLE}}</div>
+        <form class="ui form" #microcicleAddForm="ngForm" [ngClass]="{error: microcicleAddForm.invalid}">
+            <div class="ui fields">
+                <div class="fourteen wide field">
+                    <div class="ui input">
+                        <input type="text" name="mName" [placeholder]="_commonLabels.TP_ADD_MICROCICLE_PLACEHOLDER" [(ngModel)]="microcicleName" #m_Name="ngModel" required />
+                    </div>
+                    <div *ngIf="m_Name.touched && m_Name.invalid" class="ui error message">
+                        {{_commonLabels.TP_ADD_MICROCICLE_ERROR_MESSAGE}}
+                    </div>
+                </div>
+                <div class="two wide field">
+                    <button class="ui basic fluid icon button" [disabled]="m_Name.invalid" (click)="addMicrocicle()">
+                        <i class="ui plus icon"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Отображение информации о микроцикле(Будет в выпадающих акордеонах) -->
+    <div class="ui dividing header">
+        {{_commonLabels.TP_MICROCICLE_LIST_LABEL}}
+    </div>
+    <sui-accordion *ngIf="_hasInit" class="styled fluid">
+        <training-microcicle *ngFor="let item of items; let i = index; trackBy: microcicleTracker"
+                             [microcicle]="item"
+                             [newAddedMicrocicles]="newMicrocicles"
+                             (microcicleChange)="microcicleChange($event)"
+                             [planId]="id"
+                             [mode]="mode"
+
+                             [trainingSessionId]="trainingSessionId"
+                             [completedMicrocicles]="completedMicrocicles"
+                             [completedTrainings]="completedTrainings"
+                             [usersPlans]="completedExercisePlans"
+
+                             [exerciseList]="exerciseList"
+                             [(visible)]="visibleStore[i]"
+                             (deletingMicrocicle)="deleteMicrocicleHandler($event)"
+        >
+        </training-microcicle>
+    </sui-accordion>
+</div>

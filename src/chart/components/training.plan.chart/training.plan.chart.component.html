@@ -1,0 +1,77 @@
+<div class="ui equal wide centered stackable grid">
+    <div class="middle aligned four wide column">
+        <div class="ui link selection list">
+            <!-- Листинг микроциклов -->
+            <div *ngFor="let microcicle of microcicles; let mI = index;" class="item">
+                <sui-accordion>
+                    <sui-accordion-panel [isOpen]="visibleMicrocicles[mI]" (click)="toggleMicrocicleVisible($event, mI)">
+                        <div data-title="microcicle" title>
+                            <div class="microcicle-label">
+                                <div class="microcicle-label--name">
+                                    <i class="ui dropdown icon"></i>
+                                    <div class="ui left floated">М {{mI + 1}}: {{microcicle.microcicleName}}</div>
+                                </div>
+                                <div class="microcicle-label--checkbox">
+                                    <sui-checkbox (click)="toggleMicrocicleDataVisible($event, checkedMicrocicles[mI])"
+                                                    [(ngModel)]="checkedMicrocicles[mI]"
+                                    ></sui-checkbox>
+                                </div>
+                            </div>
+                        </div>
+                        <div content>
+                            <!-- Литинг тренировок -->
+                            <div class="ui link selection list">
+                                <div *ngFor="let training of microcicle.trainingData; let tI = index;"
+                                     group-mark [microcicleIndex]="mI" [trainingIndex]="tI" [bgColors]="pearsColor" [pearsStore]="pears"
+                                     class="item">
+                                    <div class="mod-item">
+                                        <div class="mod-item--label">
+                                            Т: {{training.name}}
+                                        </div>
+                                        <div class="mod-item--checkbox">
+                                            <sui-checkbox name="trainingName"
+                                                          [(ngModel)]="checkedTrainings[mI][tI]"
+                                                          (click)="toggleTrainingDataVisible($event, checkedTrainings[mI][tI], mI, tI)"
+                                            ></sui-checkbox>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </sui-accordion-panel>
+                </sui-accordion>
+            </div>
+        </div>
+    </div>
+    <div class="middle aligned twelve wide middle aligned column">
+        <div class="ui fluid">
+            <canvas #trainingChart></canvas>
+        </div>
+        <div>
+            <form class="ui form">
+                <div class="ui inline fields">
+                    <div class="field">
+                        <sui-radio-button name="characteristic" value="averageInt" [(ngModel)]="characteristic">
+                            Интенсивность
+                        </sui-radio-button>
+                    </div>
+                    <div class="field">
+                        <sui-radio-button name="characteristic" value="averageWeight" [(ngModel)]="characteristic">
+                            Средний вес
+                        </sui-radio-button>
+                    </div>
+                    <div class="field">
+                        <sui-radio-button name="characteristic" value="tonnage" [(ngModel)]="characteristic">
+                            Тоннаж
+                        </sui-radio-button>
+                    </div>
+                    <div class="field">
+                        <sui-radio-button name="characteristic" value="KPSH" [(ngModel)]="characteristic">
+                            КПШ
+                        </sui-radio-button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

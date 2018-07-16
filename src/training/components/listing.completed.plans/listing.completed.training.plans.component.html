@@ -1,0 +1,27 @@
+<div>
+    <div class="ui error message" *ngIf="hasGlobalError || hasError">
+        {{_globalErrorMessage || _errorMessage}}
+    </div>
+    <div class="ui info message" *ngIf="hasEmptyData">
+        {{_emptyDataMessage}}
+    </div>
+    <div class="ui dividing header">
+        Завершенные тренировочные планы
+    </div>
+    <table class="ui inverted very compact single line unstackable selectable celled table">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th class="collapsing">Категория</th>
+                <th class="collapsing">Дата завершения</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of items" (click)="viewCompletePlan(item.id, item.sessionId)">
+                <td>{{item.name}}</td>
+                <td class="collapsing">{{item.category}}</td>
+                <td class="collapsing">{{item.dateComplete}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

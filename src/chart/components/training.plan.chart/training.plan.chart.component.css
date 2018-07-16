@@ -1,0 +1,49 @@
+.microcicle-label {
+    display: flex;
+    flex-flow: nowrap row;
+    align-items: center;
+    justify-content: flex-start;
+}
+.microcicle-label--name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    flex-flow: nowrap row;
+    justify-content: flex-start;
+    margin: 0 5px;
+    padding: 5px;
+}
+.microcicle-label .microcicle-label--name .icon {
+    flex-basis: 1rem;
+    min-width: 1rem;
+    padding: 0;
+    margin: 0;
+}
+.microcicle-label--checkbox {
+    margin-left: auto;
+}
+
+.ui.list .item .mod-item {
+    display: flex;
+    flex-flow: nowrap row;
+    justify-content: flex-start;
+}
+.ui.list .item .mod-item--label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.ui.list .item .mod-item .mod-item--checkbox {
+    margin-left: auto;
+}
+
+@media(max-width: 767px) {
+    .form .ui.fields {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .form .ui.fields .field {
+        margin-top: 10px;
+    }
+}

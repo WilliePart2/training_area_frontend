@@ -1,0 +1,23 @@
+.ui.segment.mod-segment {
+    padding: 10px 0;
+}
+.ui.secondary.menu.mod-menu {
+    display: flex;
+    flex-flow: nowrap row;
+    justify-content: space-around;
+    padding: 0;
+}
+
+@media(max-width: 767px) {
+    .ui.secondary.menu.mod-menu {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+    .ui.secondary.menu.mod-menu .item {
+        align-self: stretch;
+        margin-left: 10px;
+        margin-right: 10px;
+        white-space: nowrap;
+    }
+}

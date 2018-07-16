@@ -1,0 +1,52 @@
+<sui-dimmer class="page" [isDimmed]="dimmed" [isClickable]="false">
+    <div class="ui large text loader">
+        {{dimmerMessage}}
+    </div>
+</sui-dimmer>
+
+<div>
+    <div class="sixteen wide column" *ngIf="hasError">
+        <div class="ui error message">
+            {{_errorMessage}}
+        </div>
+    </div>
+    <!-- <div class="four wide column"> -->
+        <div class="ui fluid card">
+            <div class="image">
+                <img [src]="avatar" alt="" title="" />
+            </div>
+            <div class="content">
+                <div class="ui basic fluid button" (click)="beginChangeAvatar()" >
+                    Изменить аватар
+                </div>
+            </div>
+        </div>
+    <!-- </div> -->
+    <!-- <div class="twelve wide column">
+
+    </div> -->
+</div>
+
+<ng-template let-context let-modal="modal" #chooseAvatar>
+    <div class="header">Доступные аватарки</div>
+    <div class="content">
+        <div class="ui centered stackable table stackable padded grid">
+            <div *ngFor="let image of context.list" class="four wide stretched column">
+                <div class="ui rounded small image">
+                    <img [src]="image" alt="" title="" />
+                </div>
+                <div class="ui hidden divider"></div>
+                <div class="ui basic segment middle aligned">
+                    <div class="ui basic fluid button middle aligned" (click)="modal.approve(image)" >
+                        Выбрать
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui basic button" (click)="modal.deny()">
+            Отмена
+        </div>
+    </div>
+</ng-template>

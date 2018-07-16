@@ -1,0 +1,55 @@
+<div class="ui segment middle aligned">
+    <!-- dimmer for loading workspace -->
+    <sui-dimmer class="page" [isDimmed]="dimmed" [isClickable]="false">
+        <div class="ui large text loader">{{dimmerMessage}}</div>
+    </sui-dimmer>
+    <!-- error dimmer -->
+    <sui-dimmer [isDimmed]="showErrorDimmer" [isClickable]="false">
+        <div class="ui basic segment">
+            <div class="ui error message">
+                {{dimmerErrorMessage}}
+            </div>
+        </div>
+    </sui-dimmer>
+
+    <div *ngIf="loginError" class="ui error message">
+        {{_errorLabels.LOGIN_USER_NOT_FINDED}}
+    </div>
+    <form class="ui form" [ngClass]="{error: loginForm.invalid}" #loginForm="ngForm" (ngSubmit)="onSubmit()">
+        <div class="field">
+            <label>{{_commonLabels.MAIN_FORM_LABEL_LOGIN}}</label>
+            <div class="ui left icon fluid input">
+                <i class="ui user icon"></i>
+                <input type="text" name="login" [(ngModel)]="name" required #username="ngModel" />
+            </div>
+            <div *ngIf="username.touched && username.invalid" class="ui error message">
+                {{_errorLabels.LOGIN_USERNAME_FIELD_EMPTY}}
+            </div>
+        </div>
+        <div class="field">
+            <label>{{_commonLabels.MAIN_FORM_LABEL_PASSWORD}}</label>
+            <div class="ui left icon fluid input">
+                <i class="ui key icon"></i>
+                <input type="password" name="password" [(ngModel)]="password" required #userPassword="ngModel" />
+            </div>
+            <div *ngIf="userPassword.touched && userPassword.invalid" class="ui error message">
+                {{_errorLabels.LOGIN_PASSWORD_FIELD_EMPTY}}
+            </div>
+        </div>
+        <div class="inline fields">
+            <div class="field">
+                <sui-radio-button name="group" value="user" (click)="selectGroup()" [(ngModel)]="group">
+                    {{_commonLabels.MAIN_FORM_USER_ROLE_SIMPLE_USER}}
+                </sui-radio-button>
+            </div>
+            <div class="field">
+                <sui-radio-button name="group" value="mentor" (click)="selectGroup()" [(ngModel)]="group">
+                    {{_commonLabels.MAIN_FORM_USER_ROLE_MENTOR}}
+                </sui-radio-button>
+            </div>
+        </div>
+        <button type="submit" class="ui basic fluid button" [disabled]="!groupSelected || userPassword.invalid || username.invalid">
+            {{_commonLabels.MAIN_FORM_SUBMIT_BTN}}
+        </button>
+    </form>
+</div>

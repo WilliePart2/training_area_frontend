@@ -1,0 +1,34 @@
+<div class="ui equal width centered padded grid">
+    <!-- Тут будет кабинет пользователя -->
+    <div class="four wide column">
+        <div class="ui fluid card">
+            <div class="image">
+                <img src="/assets/user_icon.png" />
+            </div>
+            <div class="content">
+                <div class="header">{{username}}</div>
+                <div class="meta">{{type}}</div>
+            </div>
+            <div class="extra content">
+                <div class="ui basic fluid button" (click)="logout()">
+                    Logout
+                </div>
+                <div *ngIf="hasError" class="ui error message">
+                    {{_errorMessage}}
+                </div>
+            </div>
+        </div>
+        <div class="ui fluid vertical menu">
+            <a class="item" routerLink="/user" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Главная</a>
+            <a class="item" routerLink="/user/mentors" routerLinkActive="active">Работа с ментором</a>
+            <a class="item" routerLink="/user/trainings" routerLinkActive="active">Тренировки</a>
+            <a class="disabled item" routerLink="/user/instruments" routerLinkActive="active">Инструменты</a>
+            <a class="disabled item" routerLink="/user/knowlage" routerLinkActive="active">База знаний</a>
+        </div>
+    </div>
+    <div class="stretched column">
+        <div class="ui segment">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

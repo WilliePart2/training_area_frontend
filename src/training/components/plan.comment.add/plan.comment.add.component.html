@@ -1,0 +1,28 @@
+<form class="ui form" [ngClass]="{error: hasError}">
+    <!-- error message -->
+    <div *ngIf="hasError" class="ui error message">
+        {{_errorMessage}}
+    </div>
+    <!-- dimmer -->
+    <sui-dimmer class="inverted" [isDimmed]="dimmed" [isClickable]="false">
+        <div class="ui large text loader">
+            {{dimmerMessage}}
+        </div>
+    </sui-dimmer>
+    <!-- body -->
+    <div class="ui dividing header">
+        {{_commonLabels.YOUR_COMMENT}}
+    </div>
+    <div class="ui fluid input">
+        <textarea name="commentText" [(ngModel)]="text" #commentText></textarea>
+    </div>
+    <div class="ui fitted hidden divider"></div>
+    <div class="ui fitted hidden divider"></div>
+    <div class="ui grid">
+        <div class="sixteen wide mobile six wide computer right floated column">
+            <button [disabled]="!text" (click)="createNewComment()" class="ui basic primary fluid button">
+                {{_commonLabels.ADD_COMMENT_BTN}}
+            </button>
+        </div>
+    </div>
+</form>

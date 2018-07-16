@@ -1,0 +1,7 @@
+.ui.list.mod-list {
+    overflow: hidden;
+}
+.ui.list .mod-item {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

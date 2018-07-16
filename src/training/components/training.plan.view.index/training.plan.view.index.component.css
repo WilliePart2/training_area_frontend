@@ -1,0 +1,9 @@
+.content-with-loader {
+    position: relative;
+}
+.content-with-loader .custom-dimmer .loader {
+    display: block;
+    opacity: 1;
+    position: absolute;
+    left: 115%;
+}

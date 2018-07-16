@@ -1,0 +1,17 @@
+<div class="ui fluid segment">
+        <div class="ui hidden fitted clearing divider"></div>
+    <div class="ui left floated header without-bottom-margin">
+        <div class="content">
+            <sui-rating [(ngModel)]="rating" maximum="10" [isReadonly]="userId === ownId"></sui-rating>
+        </div>
+    </div>
+    <ng-container *ngIf="userId !== ownId">
+        <div *ngIf="!_isFollowed" [class.loading]="followButtonThinking" class="ui right floated tiny basic button" (click)="followThisUser()">
+            Подписаться
+        </div>
+        <div *ngIf="_isFollowed" [class.loading]="followButtonThinking" class="ui right floated tiny basic button" (click)="unfollowThisUser()">
+            Отписаться
+        </div>
+    </ng-container>
+    <div class="ui hidden fitted clearing divider"></div>
+</div>

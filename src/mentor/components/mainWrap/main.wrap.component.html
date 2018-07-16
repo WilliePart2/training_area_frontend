@@ -1,0 +1,107 @@
+<div class="ui equal width padded centered grid">
+    <!-- templates -->
+    <ng-template #mentor>Наставник</ng-template>
+    <ng-template #user>Пользователь</ng-template>
+    <!-- header sidebar -->
+    
+        <div class="ui menu mod-menu">
+            <div class="ui dropdown floating left pointing item" suiDropdown>
+                <i class="sidebar icon"></i>
+                <div class="menu mod-padding" suiDropdownMenu>
+                    <a routerLink="/mentor" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="link item">
+                        {{_menuLabels.NEWS}}
+                    </a>
+                    <a class="link item" routerLink="user-page" routerLinkActive="active">
+                        {{_menuLabels.MY_PAGE}}
+                    </a>
+                    <a class="link item" routerLink="messages" routerLinkActive="active">
+                        {{_menuLabels.MESSAGES}}
+                    </a>
+                    <a class="link item" [routerLink]="type === 'mentor' ? 'padawan' : 'mentors'" routerLinkActive="active">
+                        {{_menuLabels.USERS}}
+                    </a>
+                    <a class="link item" routerLink="training" routerLinkActive="active">
+                        {{_menuLabels.TRAININGS}}
+                    </a>
+                    <div class="link item" routerLink="setting" routerLinkActive="active">
+                        {{_menuLabels.SETTING}}
+                    </div>
+                    <a class="disabled item">Инструменты</a>
+                    <a class="disabled item">База знаний</a>
+                    <div class="ui fitted divider"></div>
+                    <a class="item" (click)="onLogout()">
+                        {{_menuLabels.LOGOUT}}
+                    </a>
+                </div>
+            </div>
+            <div class="right menu">
+                <div class="link item" (click)="goBack()">
+                    <i class="left chevron icon"></i>
+                </div>
+                <div class="link item" (click)="goForward()">
+                    <i class="right chevron icon"></i>
+                </div>
+            </div>
+        </div>
+    
+        <!-- <div class="mobile six wide tablet five wide computer three wide column sidebar-overlay"
+             [ngClass]="{'sidebar-overlay': true}"
+             [@sidebarVisibleChange]="sidebarVisible"
+             #sidebar
+             (click)="toggleSidebar()"
+        >
+            <div class="ui fluid card">
+                <div class="image">
+                    <img [src]="avatar" />
+                </div>
+                <div class="content">
+                    <div class="header">
+                        {{username}}
+                    </div>
+                    <div class="meta">
+                        <div *ngIf="type === 'mentor'; then mentor else user"></div>
+                    </div>
+                </div>
+                <div class="extra content">
+                    <div class="ui basic fluid button" (click)="onLogout()">Выход</div>
+                </div>
+            </div>
+            <div class="ui vertical fluid menu">
+                <a class="link item" routerLink="/mentor" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                    Новости
+                </a>
+                <a class="link item" routerLink="user-page" routerLinkActive="">
+                    Моя страница
+                </a>
+                <a class="link item" routerLink="padawan" routerLinkActive="active">
+                    Подопечные
+                </a>
+                <a class="link item" routerLink="training" routerLinkActive="active">
+                    Тренировки
+                </a>
+                <div class="link item" routerLink="setting" routerLinkActive="active">
+                    Настройки
+                </div>
+                <a class="disabled item">Инструменты</a>
+                <a class="disabled item">База знаний</a>
+            </div>
+        </div> -->
+        <div class="stretched column custom-block">
+            <div>
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    <!-- <div class="ui secondary circular big icon button middle aligned center aligned toggle-button" (click)="toggleSidebar()">
+        <i class="sidebar icon"></i>
+    </div> -->
+    <!-- container for messaging -->
+    <div [ngStyle]="messageContainerStyle">
+        <ng-template #messageContainer></ng-template>
+    </div>
+    <!-- message template -->
+    <ng-template let-data #message>
+        <div [@messageAnimation] class="ui {{data.class ? data.class : ''}} message" [ngStyle]="messageStyle">
+            {{data?.message}}
+        </div>
+    </ng-template>
+</div>

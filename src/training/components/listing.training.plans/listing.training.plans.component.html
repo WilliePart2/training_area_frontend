@@ -1,0 +1,49 @@
+<div>
+    <div class="ui error message" *ngIf="hasError">
+        {{_errorMessage}}
+    </div>
+    <!-- dimmer -->
+    <sui-dimmer class="page" [isDimmed]="process" [isClickable]="false">
+        <div class="ui large text loader">
+            {{processMessage}}
+        </div>
+    </sui-dimmer>
+    <!-- add plan btn -->
+    <div class="ui grid">
+        <div class="sixteen wide mobile eight wide computer column">
+            <a routerLink="training-plan-create" class="ui right floated basic primary fluid button">{{_commonLabels.LIST_TP_CREATE_TP_LABEL}}</a>
+        </div>
+    </div>
+    <!-- listing -->
+    <div class="ui hidden clearing divider"></div>
+    <div class="relative-table">
+        <table class="ui inverted very compact single line celled selectable unstackable table">
+            <thead>
+                <tr>
+                    <th>{{_commonLabels.LIST_TP_NAME_LABEL}}</th>
+                    <th class="collapsing">{{_commonLabels.LIST_TP_CATEGORY_LABEL}}</th>
+                    <th class="collapsing">{{_commonLabels.LIST_TP_RATING_LABEL}}</th>
+                    <th class="collapsing">{{_commonLabels.LIST_TP_ACTION_LABEL}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of items" (click)="viewTrainingPlan(item.id)" class="pointed">
+                    <td>{{item.name}}</td>
+                    <td class="ui {{item.category['color']}} collapsing">{{item.category['value']}}</td>
+                    <td class="ui collapsing">
+                        <sui-rating class="star" [ngModel]="item.rating" [maximum]="5" [isReadonly]="true"></sui-rating>
+                    </td>
+                    <td class="center aligned collapsing">
+                        <div class="ui very compact inverted basic icon button"
+                            suiPopup [popupText]="_commonLabels.LIST_TP_ACTION_DELETE_LABEL" popupPlacement="left"
+                            (click)="removeTrainingPlan($event, item.id)">
+                            <i class="ui delete icon"></i>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!--<training-plan-item *ngFor="let item of items" [data]="item"></training-plan-item>-->
+    <pagination [totalCount]="totalCount" [pageSize]="step" [(currentPage)]="page"></pagination>
+</div>
